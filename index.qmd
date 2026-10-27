@@ -1,0 +1,159 @@
+---
+pagetitle: "Julie Murphy"
+description: "Commercial strategist and industry advocate in aviation and travel. Head of Trade Relations and Partnerships EMEA at All Nippon Airways (ANA)."
+listing:
+  - id: roles-list
+    contents: roles.yml
+    template: _templates/roles.ejs
+    sort: false
+  - id: career-list
+    contents: career.yml
+    template: _templates/career.ejs
+    sort: false
+  - id: news-list
+    contents: news.yml
+    template: _templates/news.ejs
+    sort: false
+---
+
+::::: {.jm}
+
+:::: {.hero}
+::: {.hero-text}
+[Aviation · Travel · Partnerships]{.eyebrow}
+
+# Julie Murphy
+
+::: {.lead}
+Commercial strategist and industry advocate. I build partnerships that drive growth across aviation and travel, and bring stakeholders together to spark innovation and results.
+:::
+
+::: {.hero-meta}
+Head of Trade Relations and Partnerships EMEA, All Nippon Airways (ANA) · London
+:::
+
+::: {.hero-links}
+[Get in touch](#contact){.btn-solid .no-external} [LinkedIn](https://www.linkedin.com/in/juliemurphyana/){.btn-ghost}
+:::
+:::
+
+::: {.hero-figure}
+{{< include _routes.qmd >}}
+:::
+::::
+
+:::: {.glance}
+::: {.stat}
+[Since 1997]{.stat-big}
+[with All Nippon Airways (ANA)]{.stat-small}
+:::
+
+::: {.stat}
+[Since 2018]{.stat-big}
+[Chair, Star Alliance Country Steering Group UK and Ireland]{.stat-small}
+:::
+
+::: {.stat}
+[F.Inst.TT]{.stat-big}
+[Fellow, Institute of Travel and Tourism]{.stat-small}
+:::
+::::
+
+:::: {#what-i-do .block}
+::: {.section-head}
+[01]{.num}
+
+## What I do {#what-i-do-title}
+:::
+
+::: {.intro}
+I'm a senior leader in aviation, with a career shaped by building strong partnerships, driving strategic growth and representing a globally respected airline brand across the UK, Ireland and EMEA.
+:::
+
+::: {.pillars}
+::: {.pillar}
+### Trade relations and partnerships
+
+At ANA, one of the world's top-rated airlines, I lead pan-European trade strategy and the UK and Irish markets, collaborating closely across the B2B2C space, from corporate travel to leisure, to deliver commercial success and lasting relationships.
+:::
+
+::: {.pillar}
+### Commercial strategy
+
+Business development, strategic planning and customer engagement, and equally the softer skills: influence, connection and being able to read the room.
+:::
+
+::: {.pillar}
+### Industry advocacy
+
+My industry roles keep me connected to the broader direction of aviation and travel, and let me contribute where I can to its growth and progress.
+:::
+:::
+::::
+
+:::: {.quote-band}
+> I work at the point where numbers meet nuance, where data informs action, and where partnerships aren't just transactional, they're built to last.
+::::
+
+:::: {#roles .block}
+::: {.section-head}
+[02]{.num}
+
+## Current roles {#roles-title}
+:::
+
+::: {#roles-list}
+:::
+
+::: {.previously}
+Previously Board Member and Partnerships Director, Association of Women Travel Executives (AWTE), 2024–2025.
+:::
+::::
+
+:::: {#career .block}
+::: {.section-head}
+[03]{.num}
+
+## Career {#career-title}
+:::
+
+::: {.career-intro}
+With ANA since 1997, from account manager to leading trade relations and partnerships across EMEA.
+:::
+
+::: {#career-list}
+:::
+::::
+
+:::: {#speaking .block}
+::: {.section-head}
+[04]{.num}
+
+## Speaking and press {#speaking-title}
+:::
+
+::: {.career-intro}
+I'm often asked to speak and sit on panels at industry events. A selection of talks, interviews and coverage:
+:::
+
+::: {#news-list}
+:::
+::::
+
+:::: {#contact .block .contact}
+::: {.section-head}
+[05]{.num}
+
+## Contact {#contact-title}
+:::
+
+::: {.contact-body}
+I'm always glad to hear from colleagues across aviation and travel, whether it's about partnerships or industry collaboration.
+
+::: {.contact-links}
+[Connect on LinkedIn](https://www.linkedin.com/in/juliemurphyana/){.btn-solid}
+:::
+:::
+::::
+
+:::::

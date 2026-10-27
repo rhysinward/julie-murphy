@@ -1,0 +1,47 @@
+# Current roles, in the order they should appear.
+# kind is the small label above each role. href (optional) links the organisation name.
+
+- title: Head of Trade Relations and Partnerships EMEA
+  org: All Nippon Airways (ANA)
+  href: https://www.ana.co.jp/en/gb/
+  scope: London · since April 2024
+  kind: Airline
+  text: Leading ANA's pan-European trade strategy and working closely with our key partners, while continuing to lead the UK and Irish markets.
+
+- title: Chair, Country Steering Group UK and Ireland
+  org: Star Alliance
+  href: https://www.staralliance.com/
+  scope: Since June 2018
+  kind: Airline alliance
+  text: Directing local business-plan activity for the member airlines in the UK and Irish markets, and acting as the alliance's chief spokesperson there.
+
+- title: Vice Chair
+  org: Foreign Airlines Association UK
+  href: https://www.foreignairlines.co.uk/
+  scope: On the board since February 2018
+  kind: Industry body
+
+- title: Board Member
+  org: Institute of Travel and Tourism (ITT)
+  href: https://www.itt.co.uk/
+  scope: Since June 2022
+  kind: Industry body
+  text: I'm also a Fellow of the Institute (F.Inst.TT).
+
+- title: Mentor
+  org: Women in Travel CIC
+  href: https://www.womenintravelcic.com/
+  scope: Since September 2020
+  kind: Mentoring
+
+- title: Mentor
+  org: Institute of Travel Management (ITM)
+  href: https://www.itm.org.uk/
+  scope: Since February 2020
+  kind: Mentoring
+
+- title: Judge
+  org: Travel Media Awards
+  href: https://travelmediaawards.com/
+  scope: Judging panel since 2018
+  kind: Judging

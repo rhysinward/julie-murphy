@@ -1,0 +1,16 @@
+```{=html}
+<%
+const ph = s => String(s == null ? "" : s).replace(/\[([^\]]+)\]/g, '<span class="ph">$1</span>');
+%>
+<div class="roles">
+<% for (const r of items) { %>
+  <article class="role">
+    <span class="role-kind"><%= r.kind %></span>
+    <h3><%= ph(r.title) %></h3>
+    <p class="role-org"><% if (r.href) { %><a href="<%= r.href %>"><%= ph(r.org) %></a><% } else { %><%= ph(r.org) %><% } %></p>
+    <% if (r.scope) { %><p class="role-scope"><%= ph(r.scope) %></p><% } %>
+    <% if (r.text) { %><p class="role-text"><%= ph(r.text) %></p><% } %>
+  </article>
+<% } %>
+</div>
+```

@@ -1,0 +1,11 @@
+```{=html}
+<ul class="news">
+<% for (const n of items) { %>
+  <li class="news-item">
+    <span class="news-meta"><%= [n.outlet, n.date].filter(Boolean).join(" · ") %></span>
+    <% if (n.href) { %><a class="news-title" href="<%= n.href %>"><%= n.title %></a><% } else { %><span class="news-title"><%= n.title %></span><% } %>
+    <% if (n.text) { %><p class="news-text"><%= n.text %></p><% } %>
+  </li>
+<% } %>
+</ul>
+```

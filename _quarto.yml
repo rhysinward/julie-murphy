@@ -1,0 +1,43 @@
+project:
+  type: website
+  output-dir: _site
+  resources:
+    - assets/img/*
+    - files/*
+
+website:
+  title: "Julie Murphy"
+  site-url: https://rhysinward.github.io/julie-murphy/
+  image: assets/img/julie-murphy.jpg
+  open-graph: true
+  twitter-card:
+    card-style: summary
+  description: "Commercial strategist and industry advocate in aviation and travel. Head of Trade Relations and Partnerships EMEA at All Nippon Airways (ANA)."
+  favicon: assets/img/favicon.svg
+  search: false
+  navbar:
+    right:
+      - text: What I do
+        href: index.qmd#what-i-do
+      - text: Roles
+        href: index.qmd#roles
+      - text: Career
+        href: index.qmd#career
+      - text: Speaking
+        href: index.qmd#speaking
+      - text: Contact
+        href: index.qmd#contact
+  page-footer:
+    left: "© 2026 Julie Murphy · Views are my own"
+    right: "Made with [Quarto](https://quarto.org)"
+
+format:
+  html:
+    theme: [default, assets/theme.scss]
+    include-in-header: assets/fonts.html
+    toc: false
+    lang: en-GB
+    anchor-sections: false
+    html-math-method: plain
+    link-external-newwindow: true
+    page-layout: full

@@ -1,0 +1,32 @@
+```{=html}
+<div class="route-portrait">
+<svg class="routes" viewBox="0 0 520 420" aria-hidden="true">
+  <defs>
+    <pattern id="jm-dots" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.1" class="grid-dot"/></pattern>
+  </defs>
+  <rect x="0" y="0" width="520" height="420" rx="18" fill="url(#jm-dots)"/>
+  <path class="arc arc-named" d="M165 245 Q 70 200 52 92"/>
+  <path class="arc" d="M165 245 Q 230 90 300 70"/>
+  <path class="arc arc-named" d="M165 245 Q 290 200 372 214"/>
+  <path class="arc arc-named" d="M165 245 Q 240 360 318 372"/>
+  <path class="arc" d="M165 245 Q 90 330 60 392"/>
+  <path class="arc" d="M165 245 Q 360 330 452 300"/>
+  <path class="arc arc-main" d="M165 245 Q 330 -10 476 118"/>
+  <circle class="node node-named" cx="52" cy="92" r="5"/>
+  <circle class="node" cx="300" cy="70" r="4"/>
+  <circle class="node node-named" cx="372" cy="214" r="5"/>
+  <circle class="node node-named" cx="318" cy="372" r="5"/>
+  <circle class="node" cx="60" cy="392" r="4"/>
+  <circle class="node" cx="452" cy="300" r="4"/>
+  <circle class="hub-ring" cx="165" cy="245" r="104"/>
+  <circle class="dest-ring" cx="476" cy="118" r="11"/>
+  <circle class="dest" cx="476" cy="118" r="5.5"/>
+  <text class="code" x="56" y="74" text-anchor="middle">DUBLIN</text>
+  <text class="code" x="378" y="196" text-anchor="middle">FRANKFURT</text>
+  <text class="code" x="318" y="400" text-anchor="middle">PARIS</text>
+  <text class="code" x="466" y="94" text-anchor="middle">TOKYO</text>
+  <text class="code" x="165" y="374" text-anchor="middle">LONDON</text>
+</svg>
+<img class="portrait" src="assets/img/julie-murphy.jpg" alt="Julie Murphy" width="480" height="480">
+</div>
+```

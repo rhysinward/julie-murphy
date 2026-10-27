@@ -1,0 +1,279 @@
+/*-- scss:defaults --*/
+
+$font-family-sans-serif: "Instrument Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+$headings-font-family: "Fraunces", Georgia, "Times New Roman", serif;
+$headings-font-weight: 500;
+$font-size-root: 17px;
+$line-height-base: 1.65;
+$body-bg: #F6F3EE;
+$body-color: #13213A;
+$link-color: #2B6592;
+$primary: #13213A;
+$navbar-bg: #F6F3EE;
+$navbar-fg: #13213A;
+$navbar-hl: #A84226;
+$footer-bg: #F6F3EE;
+
+/*-- scss:rules --*/
+
+// Concept: a departures board written by an editor. Warm paper, deep navy ink,
+// a sky blue for links and a vermilion accent borrowed from a boarding-pass stub.
+
+:root {
+  --paper: #F6F3EE;
+  --paper-2: #ECE6DC;
+  --ink: #13213A;
+  --ink-2: #4A5468;
+  --rule: #DAD2C5;
+  --rule-strong: #BDB3A3;
+  --sky: #2B6592;
+  --coral: #A84226;
+  --gold: #7A5D27;
+  --grid-dot: #D3CABB;
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-body: "Instrument Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+@mixin dark-tokens {
+  --paper: #0F1726;
+  --paper-2: #182235;
+  --ink: #EEF1F5;
+  --ink-2: #A7B1C1;
+  --rule: #273247;
+  --rule-strong: #3B4862;
+  --sky: #8DBCE3;
+  --coral: #F0906F;
+  --gold: #D9B877;
+  --grid-dot: #26324A;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { @include dark-tokens; }
+}
+:root[data-theme="dark"] { @include dark-tokens; }
+
+// 1. Base --------------------------------------------------------------------
+
+html { scroll-padding-top: 5rem; }
+body { background: var(--paper); color: var(--ink); font-family: var(--font-body); }
+a { color: var(--sky); text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
+a:hover { color: var(--coral); }
+h1, h2, h3, .title { font-family: var(--font-display); color: var(--ink); letter-spacing: -0.015em; text-wrap: balance; }
+h2 { border-bottom: 0 !important; padding-bottom: 0 !important; }
+p, li { text-wrap: pretty; }
+:focus-visible { outline: 2px solid var(--coral); outline-offset: 3px; border-radius: 2px; }
+
+.ph {
+  text-decoration: underline dashed var(--coral);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.25em;
+}
+
+.btn-solid, .btn-ghost {
+  display: inline-block;
+  padding: 0.62rem 1.3rem;
+  border-radius: 999px;
+  font-weight: 600;
+  text-decoration: none;
+  line-height: 1.2;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.btn-solid { background: var(--ink); color: var(--paper) !important; border: 1px solid var(--ink); }
+.btn-solid:hover { background: var(--coral); border-color: var(--coral); }
+.btn-ghost { color: var(--ink) !important; border: 1px solid var(--rule-strong); }
+.btn-ghost:hover { border-color: var(--ink); }
+
+// 2. Quarto chrome -----------------------------------------------------------
+
+#quarto-header, .navbar { background: var(--paper) !important; }
+#quarto-header { border-bottom: 1px solid var(--rule); }
+.navbar-title, .navbar .nav-link, .navbar .menu-text, .navbar .bi { color: var(--ink) !important; }
+.navbar-title { font-family: var(--font-display); font-weight: 500; font-size: 1.3rem; letter-spacing: -0.01em; }
+.navbar .nav-link:hover .menu-text { color: var(--coral) !important; }
+.navbar-toggler { border-color: var(--rule-strong); }
+.nav-footer { background: var(--paper) !important; border-top: 1px solid var(--rule); color: var(--ink-2); font-size: 0.85rem; }
+.nav-footer a { color: var(--ink-2); }
+#title-block-header { display: none; }
+
+// 3. Page --------------------------------------------------------------------
+
+.jm { max-width: 1080px; margin-inline: auto; }
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: center;
+  padding-block: clamp(1.5rem, 5vw, 4rem) clamp(1.5rem, 4vw, 3rem);
+}
+.hero-text { min-width: 0; }
+.eyebrow {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--coral);
+}
+.hero h1 {
+  font-size: clamp(3rem, 1.6rem + 5vw, 5.4rem);
+  font-weight: 500;
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  margin: 0.6rem 0 1.2rem;
+}
+.hero .lead { font-size: clamp(1.12rem, 1rem + 0.5vw, 1.3rem); line-height: 1.55; color: var(--ink); max-width: 33rem; font-weight: 400; }
+.hero .lead p { margin: 0; }
+.hero-meta { margin-top: 1.1rem; padding-top: 1rem; border-top: 1px solid var(--rule); color: var(--ink-2); font-size: 0.95rem; max-width: 33rem; }
+.hero-meta p { margin: 0; }
+.hero-links { margin-top: 1.6rem; }
+.hero-links p { display: flex; flex-wrap: wrap; gap: 0.65rem; margin: 0; }
+.hero-figure { min-width: 0; }
+
+.routes { width: 100%; height: auto; display: block; }
+.routes .grid-dot { fill: var(--grid-dot); }
+.routes .arc { fill: none; stroke: var(--sky); stroke-width: 1.5; stroke-linecap: round; opacity: 0.55; }
+.routes .arc-main { stroke: var(--coral); stroke-width: 2.4; opacity: 1; stroke-dasharray: 7 7; animation: jm-dash 18s linear infinite; }
+.routes .node { fill: var(--paper); stroke: var(--sky); stroke-width: 2; }
+.routes .node-named { fill: var(--sky); stroke: var(--paper); stroke-width: 2; }
+.routes .arc-named { opacity: 0.9; stroke-width: 1.8; }
+.routes .hub { fill: var(--ink); }
+.routes .hub-ring { fill: none; stroke: var(--coral); stroke-width: 1.5; opacity: 0.55; stroke-dasharray: 2 5; }
+.routes .dest { fill: var(--coral); }
+.routes .dest-ring { fill: none; stroke: var(--coral); stroke-width: 1.5; opacity: 0.4; }
+.routes .code { font-family: var(--font-body); font-size: 14px; font-weight: 600; letter-spacing: 0.12em; fill: var(--ink); paint-order: stroke; stroke: var(--paper); stroke-width: 4px; stroke-linejoin: round; }
+.routes .code-sm { font-size: 12px; fill: var(--ink-2); }
+.route-portrait { position: relative; }
+.route-portrait .portrait {
+  position: absolute;
+  left: 13.4615%;   /* (hub x 165 - radius 95) / 520 */
+  top: 35.7143%;    /* (hub y 245 - radius 95) / 420 */
+  width: 36.5385%;  /* diameter 190 / 520 */
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 5px solid var(--paper);
+  box-shadow: 0 10px 30px rgba(19, 33, 58, 0.18);
+}
+@keyframes jm-dash { to { stroke-dashoffset: -280; } }
+@media (prefers-reduced-motion: reduce) { .routes .arc-main { animation: none; } }
+
+.block { padding-block: clamp(2.25rem, 5vw, 3.75rem); border-top: 1px solid var(--rule); }
+.section-head { display: flex; align-items: baseline; gap: 0.9rem; margin-bottom: 1.6rem; }
+.section-head p { margin: 0; }
+.section-head .num { font-family: var(--font-display); font-style: italic; font-size: 1.1rem; color: var(--coral); }
+.section-head h2 { margin: 0; font-size: clamp(1.7rem, 1.3rem + 1.4vw, 2.3rem); font-weight: 500; }
+
+.intro { font-family: var(--font-display); font-size: clamp(1.2rem, 1.05rem + 0.6vw, 1.45rem); line-height: 1.5; max-width: 46rem; margin-bottom: 2.2rem; }
+.intro p { margin: 0; }
+.pillars { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem 2rem; }
+.pillar { min-width: 0; border-top: 2px solid var(--ink); padding-top: 1rem; }
+.pillar h3 { font-family: var(--font-body); font-weight: 600; font-size: 1.05rem; letter-spacing: 0; margin: 0 0 0.5rem; }
+.pillar p { color: var(--ink-2); margin: 0; }
+
+.quote-band { margin-block: 0.5rem clamp(1.5rem, 4vw, 2.5rem); }
+.quote-band blockquote {
+  margin: 0;
+  padding: clamp(1.4rem, 3vw, 2.2rem) clamp(1.3rem, 4vw, 2.8rem);
+  background: var(--paper-2);
+  border-left: 4px solid var(--coral);
+  border-radius: 0 14px 14px 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1.25rem, 1.05rem + 1vw, 1.75rem);
+  line-height: 1.4;
+  color: var(--ink);
+}
+.quote-band blockquote p { margin: 0; }
+
+.roles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.role { min-width: 0; background: var(--paper); border: 1px solid var(--rule); border-radius: 14px; padding: 1.25rem 1.35rem; }
+.role-kind { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--coral); }
+.role h3 { font-size: 1.3rem; font-weight: 500; margin: 0.45rem 0 0.25rem; }
+.role-org { margin: 0; font-weight: 500; }
+.role-org a { color: var(--ink); text-decoration-color: var(--rule-strong); }
+.role-org a:hover { color: var(--coral); }
+.role-scope { margin: 0.2rem 0 0; color: var(--ink-2); font-size: 0.95rem; }
+.role-text { margin: 0.6rem 0 0; color: var(--ink-2); font-size: 0.95rem; }
+
+.career { list-style: none; margin: 0; padding: 0; }
+.career-item { display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: 0.25rem 1.5rem; padding: 1.15rem 0; border-bottom: 1px solid var(--rule); }
+.career-item:first-child { padding-top: 0.25rem; }
+.career-when { color: var(--ink-2); font-size: 0.92rem; font-variant-numeric: tabular-nums; padding-top: 0.2rem; }
+.career-item.is-current .career-when { color: var(--coral); font-weight: 600; }
+.career-body h3 { font-family: var(--font-body); font-weight: 600; font-size: 1.05rem; letter-spacing: 0; margin: 0 0 0.15rem; }
+.career-org { margin: 0; color: var(--ink-2); }
+.career-text { margin: 0.4rem 0 0; font-size: 0.95rem; }
+
+.news { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.9rem; }
+.news-item { border-left: 2px solid var(--rule-strong); padding: 0.15rem 0 0.15rem 1rem; }
+.news-meta { display: block; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); }
+.news-title { font-weight: 600; }
+.news-text { margin: 0.25rem 0 0; color: var(--ink-2); font-size: 0.95rem; }
+
+.contact .contact-body { max-width: 40rem; font-size: 1.1rem; }
+.contact-links { margin-top: 1.2rem; }
+.contact-links p { display: flex; flex-wrap: wrap; gap: 0.65rem; margin: 0; }
+
+// 4. Narrow screens ----------------------------------------------------------
+
+@media (max-width: 991.98px) {
+  .pillars { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 767.98px) {
+  .hero { grid-template-columns: minmax(0, 1fr); }
+  .hero-figure { max-width: 440px; }
+  .roles { grid-template-columns: minmax(0, 1fr); }
+  .career-item { grid-template-columns: minmax(0, 1fr); }
+}
+
+// 5. Additions --------------------------------------------------------------
+
+.glance {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--rule);
+  margin-bottom: 0.5rem;
+}
+.stat { min-width: 0; padding: 1.1rem 1.25rem 1.3rem 0; }
+.stat + .stat { padding-left: 1.25rem; border-left: 1px solid var(--rule); }
+.stat p { margin: 0; display: flex; flex-direction: column; gap: 0.2rem; }
+.stat-big { font-family: var(--font-display); font-size: clamp(1.35rem, 1.1rem + 1vw, 1.8rem); font-weight: 500; color: var(--ink); line-height: 1.15; }
+.stat-small { color: var(--ink-2); font-size: 0.92rem; }
+.previously { margin-top: 1.1rem; color: var(--ink-2); font-size: 0.95rem; }
+.previously p { margin: 0; }
+.career-intro { color: var(--ink-2); max-width: 40rem; margin: -0.6rem 0 1.4rem; }
+.career-intro p { margin: 0; }
+@media (max-width: 767.98px) {
+  .glance { grid-template-columns: minmax(0, 1fr); }
+  .stat, .stat + .stat { padding: 0.9rem 0; border-left: 0; }
+  .stat + .stat { border-top: 1px solid var(--rule); }
+}
+
+// 6. Final review fixes ------------------------------------------------------
+
+// Hamburger icon drawn with the ink token so it shows in dark mode too.
+.navbar-toggler-icon {
+  background-image: none !important;
+  background-color: var(--ink);
+  -webkit-mask: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23000' stroke-linecap='round' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") center / 100% 100% no-repeat;
+  mask: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23000' stroke-linecap='round' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") center / 100% 100% no-repeat;
+}
+
+// Bootstrap removes outlines on nav links and the toggler; put the coral ring back.
+.navbar .nav-link:focus-visible, .navbar-brand:focus-visible, .navbar-toggler:focus-visible {
+  outline: 2px solid var(--coral);
+  outline-offset: -2px;
+  box-shadow: none;
+}
+
+// Smooth scrolling only for people who haven't asked for reduced motion.
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+@media (prefers-reduced-motion: reduce) { header.headroom { transition: none !important; } }
+
+.career-item:last-child { border-bottom: 0; }
+
+// Keep map labels legible when the map shrinks on phones.
+@media (max-width: 767.98px) { .routes .code { font-size: 17px; } }
