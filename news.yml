@@ -1,68 +1,129 @@
 # Speaking, interviews and press, newest first.
-# Each item: title, outlet, date, href (link to the source), text (one short sentence).
+# Each item: title, outlet, when, href (link to the source), text (one short sentence). lead: true shows it before "Show more".
+
+- title: Judge, Travel Media Awards 2026
+  outlet: Travel Media Awards
+  when: "2026"
+  href: https://www.travelmediaawards.com/travelmediaawards2026/en/page/judges-list-2026
+  text: Named on the judging panel for the 2026 awards.
 
 - title: Welcome address, Star Alliance Christmas lunch, Dublin
+  lead: true
   outlet: Irish Travel Trade News
-  date: Dec 2025
+  when: Dec 2025
   href: https://ittn.ie/travel-news/shelbourne-hotel-hosts-10th-annual-star-alliance-christmas-lunch/
   text: Welcomed guests on behalf of the Star Alliance partners at the 10th annual lunch at the Shelbourne Hotel.
 
 - title: Co-host and speaker, Star Alliance Christmas lunch, Dublin
+  lead: true
   outlet: Irish Travel Trade News
-  date: Dec 2024
+  when: Dec 2024
   href: https://ittn.ie/travel-news/star-alliance-hosts-annual-christmas-lunch-at-shelbourne-hotel/
   text: Co-hosted the alliance's annual trade lunch with United Airlines, covering its digital progress and its fifth World Travel Awards win.
 
+- title: Judge, TTG Luxury Travel Awards 2024
+  outlet: TTG
+  when: Jan 2024
+  href: https://www.ttgmedia.com/luxury/judges-assemble-for-ttg-luxury-travel-awards-2024-44133
+  text: Named among the judges of the 2024 awards.
+
 - title: Speaker, Star Alliance Christmas lunch, Dublin
   outlet: Irish Travel Trade News
-  date: Dec 2023
+  when: Dec 2023
   href: https://ittn.ie/travel-news/together-better-connected-with-star-alliance-at-their-christmas-lunch/
   text: Spoke about the alliance's plans, including digital and mobile innovation and its "Together, Better Connected" tagline.
 
 - title: ANA's partnership with CLIA UK and Ireland
   outlet: TravelMole
-  date: Sep 2023
+  when: Sep 2023
   href: https://www.travelmole.com/news/clia-and-ana-announce-partnership
   text: Commented for ANA on sponsoring the CLIA Destination Showcase and Cruise Forum as Japan reopened to visitors.
 
+- title: Elected to the Institute of Travel & Tourism board
+  outlet: TTG
+  when: Jun 2022
+  href: https://www.ttgmedia.com/news/ttg-media-ceo-elected-among-new-itt-board-members-34595
+  text: Elected as one of four new directors.
+
 - title: "Interview: ANA's international rebound"
+  lead: true
   outlet: Simple Flying
-  date: Nov 2021
+  when: Nov 2021
   href: https://simpleflying.com/ana-international-rebound-2022/
   text: Japan's inbound tourism goals and how ANA planned to welcome visitors back after the pandemic, including travel beyond Tokyo.
 
 - title: Speaker, ABTA Business Travel Recovery and Trends webinar
+  lead: true
   outlet: ABTA
-  date: Aug 2021
+  when: Aug 2021
   href: https://www.abta.com/sites/default/files/media/document/uploads/business%20travel%20recovery%20and%20trends.pdf
   text: Led the session on business travel sentiment, covering what matters to customers, sustainability and wellbeing.
 
 - title: Star Alliance evening for travel managers, London
-  outlet: Buying Business Travel
-  date: Nov 2019
-  href: https://web.archive.org/web/20221007212632/https://www.businesstravelnewseurope.com/Air-Travel/BBT-readers-sample-Star-Alliance-food-and-wine
+  lead: true
+  outlet: Business Travel News Europe
+  when: Nov 2019
+  href: https://www.businesstravelnewseurope.com/Air-Travel/BBT-readers-sample-Star-Alliance-food-and-wine
   text: Represented Star Alliance at a trade event, highlighting its airlines at Heathrow Terminal 2 and its new transfer service.
+
+- title: ANA's new first and business cabins in London
+  outlet: The Business Travel Magazine
+  when: Jul 2019
+  href: https://thebusinesstravelmag.com/japans-ana-unveils-new-business-and-first-cabins/
+  text: Explained why the new cabins would debut on ANA's London route.
 
 - title: Star Alliance Connection Service launch at Heathrow
   outlet: BTNews
-  date: Jun 2019
+  when: Jun 2019
   href: https://www.btnews.co.uk/article/14701
   text: Quoted as chair of the UK country steering group at the launch of the alliance's Connection Service.
 
+- title: Changes in corporate airline sourcing
+  outlet: Business Travel News Europe
+  when: Feb 2019
+  href: https://www.businesstravelnewseurope.com/Management/Sourcing-Step-change
+  text: Commented for ANA on evolving airline pricing and joint-venture deals.
+
+- title: ANA joins the GTMC as an industry partner
+  outlet: TravelMole
+  when: Dec 2018
+  href: https://travelmole.com/news/ana-joins-gtmc
+  text: Commented on the partnership and the senior-level access it gives ANA on business travel topics.
+
 - title: Featured speaker, ITM Ireland Conference, Dublin
   outlet: Institute of Travel Management
-  date: Nov 2018
+  when: Nov 2018
   href: https://www.itm.org.uk/events/evt-000549
-  text: Spoke at ITM's annual business travel conference for Ireland at The Westbury.
+  text: Listed as a featured speaker at ITM's annual business travel conference for Ireland at The Westbury.
+
+- title: BBT Forum, London
+  outlet: Business Travel News Europe
+  when: Nov 2018
+  href: https://www.businesstravelnewseurope.com/Management/Gain-an-edge-in-business-at-the-BBT-Forum
+  text: Listed on a panel about the new landscape of travel procurement.
+
+- title: Featured speaker, ITM Airline Showcase, London
+  outlet: Institute of Travel Management
+  when: Jun 2018
+  href: https://www.itm.org.uk/events/evt-000559
+  text: Listed as a featured speaker at the airline distribution showcase, where ANA was one of four presenting airlines.
 
 - title: "Interview: Star Alliance at Heathrow Terminal 2"
+  lead: true
   outlet: TheDesignAir
-  date: Oct 2017
+  when: Oct 2017
   href: https://thedesignair.net/2017/10/08/thedesignair-exclusive-interview-with-star-alliances-julie-murphy/
   text: Interviewed as Star Alliance's UK chair on Terminal 2, the airport experience and the alliance's digital plans.
 
+- title: Speaker, Business Travel Show 2017
+  lead: true
+  outlet: Business Travel News Europe
+  when: Feb 2017
+  href: https://www.businesstravelnewseurope.com/Columnists/Business-Travel-Show-2017-presentations
+  text: Presented with CWT Solutions Group on managing suppliers and service providers in Asia.
+
 - title: ANA appoints a general sales agent in Ireland
   outlet: Irish Travel Trade News
-  date: Apr 2015
-  href: https://ittn.ie/travel-news/alan-sparling-is-now-the-gsa-for-ana-all-nippon-airways-2/
+  when: Apr 2015
+  href: https://ittn.ie/?p=25087
   text: Quoted on ANA's appointment of Airline Sales & Marketing in Ireland and its plans to grow business from the Irish market.

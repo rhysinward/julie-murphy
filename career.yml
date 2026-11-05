@@ -1,24 +1,204 @@
-# Most recent first. current: true marks a role that is ongoing.
-# Text in [square brackets] shows as a dashed placeholder.
+# Career timeline and industry roles. Both the Career section and the Board and
+# industry leadership section read this one file.
+#
+# lane    airline, industry, moment or undated. This decides where an item appears.
+# key     short name, also the deep link: key csm gives the link #career-csm.
+# start   "YYYY-MM", or "YYYY" if only the year is on record. Always in quotes.
+# end     "YYYY-MM", present (still doing it), or unknown (ended, date not on record).
+#         Never guess a month. If there is no date on record, leave start out and
+#         use lane: undated. Nothing else in the site needs editing to add a role.
+# shift   one sentence on what changed in this role. It opens the role's text.
+# rail    the short label on the chart. strong: true gives it heavier type.
+# label   a moment with a label gets a mark on the chart. Without one, it is still
+#         reached with Earlier and Later, and is listed under That year.
+# card    true also shows the item in Board and industry leadership. Its text then appears there, not in the undated list.
 
-- title: Head of Trade Relations and Partnerships EMEA
-  org: All Nippon Airways (ANA) · London
-  when: Apr 2024 – present
-  current: true
-  text: Pan-European trade strategy, resourcing and collaboration with key partners, while continuing to lead the UK and Irish markets.
+# Airline roles, newest first.
 
-- title: Country Sales Manager, UK and Ireland
-  org: All Nippon Airways (ANA) · London
-  when: Dec 2013 – May 2024
+- key: head
+  lane: airline
+  title: Head of Trade Relations & Partnerships, EMEA
+  employer: All Nippon Airways (ANA)
+  place: London
+  start: "2024-04"
+  end: present
+  shift: Helped bring partnership work once managed country by country together across Europe.
+  text: Responsible for ANA's relationships with major travel partners across Europe, spanning business travel, leisure, distribution and joint-venture activity.
+  points:
+    - Helped make the case for a pan-European approach to trade partnerships, gained support from senior leadership and helped shape the function launched in 2024.
+    - Set priorities for key accounts across Europe and introduced clearer plans and regular reviews with partners, country teams and joint-venture colleagues.
+    - Developed senior relationships with multinational travel management companies (TMCs), leisure groups and travel technology businesses, exploring new commercial opportunities across Europe.
+    - Worked closely with colleagues in Japan to make sure European customer needs were understood and considered in decisions on pricing, distribution and partnerships.
 
-- title: UK Sales Manager
-  org: All Nippon Airways (ANA)
-  when: Apr 2010 – Nov 2013
+- key: csm
+  lane: airline
+  title: Country Sales Manager, UK & Ireland
+  employer: All Nippon Airways (ANA)
+  start: "2013-12"
+  end: "2024-03"
+  shift: Led sales and B2B marketing in the UK and Ireland, with a team of 12.
+  text: The team covered corporate and trade sales, inside sales, data analysis and marketing.
+  points:
+    - Built ANA's UK trade profile through relationships with travel industry publishers and specialist marketing agencies.
+    - Shifted the sales and marketing focus towards premium leisure, non-Japanese corporate customers and specialist travel partners, using targeted campaigns and industry relationships to build awareness of ANA.
+    - Worked with Lufthansa joint-venture colleagues to develop leisure net fares and Category 35 and ITX fares for SMEs, creating new business through TMCs and specialist leisure agents.
+    - Championed the successful bid to bring the 2019 ABTA Convention to Tokyo, where ANA was a host partner, bringing together UK industry contacts and stakeholders in Japan.
+    - Planned early for demand around the 2019 Rugby World Cup in Japan, working on trade outreach, pricing and promotions.
+    - Supported the team through COVID-19 with daily contact, practical help on customer and airport requirements, and continued engagement with travel industry partners.
+    - Coached colleagues and gave them opportunities to take on wider responsibilities, supporting their progression into management roles.
 
-- title: Key Account Manager
-  org: All Nippon Airways (ANA)
-  when: Mar 2005 – Mar 2010
+- key: uk
+  lane: airline
+  title: UK Sales Manager and earlier UK commercial roles
+  employer: All Nippon Airways (ANA)
+  start: "1997-01"
+  end: "2013-11"
+  shift: Built ANA's UK leisure and corporate business beyond its traditional Japanese customer base.
+  text: Developed key accounts and distribution relationships, and drew on my knowledge of the Australia market while expanding further into corporate and business travel.
 
-- title: Account Manager
-  org: All Nippon Airways (ANA) · London
-  when: Jan 1997 – Mar 2005
+- key: airnz
+  lane: airline
+  title: Business Development, Sales and Reservations Leadership
+  employer: Air New Zealand
+  start: "1995-01"
+  end: "1997-01"
+  shift: Moved from reservations management and training new colleagues into external sales.
+  text: Managed major leisure accounts and helped grow business across the airline's international network.
+
+- key: wardair
+  lane: airline
+  title: Customer Operations and Sales Leadership
+  employer: Wardair, Canadian Airlines and Air Canada
+  start: "1987-09"
+  end: "1994-12"
+  shift: Started in airline reservations and customer service, then moved into supervisory and management roles.
+  text: Gained first-hand experience of airline operations and commercial relationships.
+
+# Dated industry roles, newest start first. This order is what makes the chart climb.
+
+- key: awte
+  lane: industry
+  title: Board Member and Partnerships Director
+  org: Association of Women Travel Executives (AWTE)
+  rail: Board Member and Partnerships Director, AWTE
+  start: "2024-04"
+  end: "2025-04"
+
+- key: itt
+  lane: industry
+  title: Elected Board Director
+  org: Institute of Travel & Tourism (ITT)
+  href: https://www.itt.co.uk/
+  rail: Elected Board Director, ITT
+  strong: true
+  start: "2022-06"
+  end: present
+  note: Now in my third term.
+  text: I contribute to strategy, governance and financial oversight.
+  card: true
+
+- key: wit
+  lane: industry
+  title: Mentor
+  org: Women in Travel CIC
+  rail: Mentor, Women in Travel CIC
+  start: "2020-09"
+  end: present
+
+- key: itm
+  lane: industry
+  title: Mentor
+  org: Institute of Travel Management (ITM)
+  card_org: Institute of Travel Management (ITM), Women in Travel CIC, and independently
+  href: https://www.itm.org.uk/
+  rail: Mentor, ITM
+  start: "2020-02"
+  end: present
+  card: true
+
+- key: star
+  lane: industry
+  title: Chair
+  org: Star Alliance UK & Ireland
+  href: https://www.staralliance.com/
+  rail: Elected Chair, Star Alliance UK & Ireland
+  strong: true
+  start: "2018-06"
+  end: present
+  note: Elected by peers, having previously led the alliance's sales subgroup.
+  text: Directing local business-plan activity for the member airlines in the UK and Irish markets, and acting as the alliance's chief spokesperson there.
+  card: true
+
+# Dated moments, oldest first. Year-only dates stay year-only everywhere on the page.
+
+- key: gsa
+  lane: moment
+  title: ANA's general sales agent in Ireland announced
+  label: Irish GSA
+  parent: csm
+  start: "2015-04"
+  text: I pushed for the partnership, which helped grow a previously underserved market.
+
+- key: rwc
+  lane: moment
+  title: Rugby World Cup in England
+  parent: csm
+  start: "2015"
+  text: Targeted marketing during the tournament, as part of planning early for demand around the 2019 tournament in Japan.
+
+- key: abta
+  lane: moment
+  title: ABTA Convention in Tokyo
+  label: ABTA in Tokyo
+  parent: csm
+  start: "2019"
+  text: I championed the bid, with ANA as a host partner, welcoming more than 400 travel industry delegates and raising ANA's profile in the UK travel trade.
+
+- key: function
+  lane: moment
+  title: ANA's first pan-European trade relations function launched
+  parent: head
+  start: "2024"
+  text: I helped shape it, bringing together partnership activity that had previously been managed country by country.
+
+# No year on record, so these are listed in words and never drawn.
+
+- key: fellow
+  lane: undated
+  title: Fellow of the Institute of Travel & Tourism (F.Inst.TT)
+
+- key: tmc
+  lane: undated
+  title: Led ANA's first multinational travel management company agreement
+  text: Working across markets and with colleagues in Japan to agree a common approach with a major customer.
+
+- key: subgroup
+  lane: undated
+  title: Led the Star Alliance UK & Ireland sales subgroup, before being elected chair
+
+- key: engagement
+  lane: undated
+  title: Industry engagement
+  org: ABTA, Business Travel Association and Institute of Travel Management
+  text: Active contributor, including industry advocacy during COVID-19 and discussions with parliamentary stakeholders.
+  card: true
+
+- key: speaking
+  lane: undated
+  title: Speaker and panellist
+  org: ITT, Advantage, ABTA and ANTOR conferences and events
+
+- key: mentor-independent
+  lane: undated
+  title: Mentor, independently
+
+- key: faa
+  lane: undated
+  title: Former Vice Chair, Foreign Airlines Association UK
+  text: On the board from February 2018, since left.
+
+- key: judge
+  lane: undated
+  title: Judge
+  org: TTG Luxury Travel Awards (2024) and the Travel Media Awards
+  card: true

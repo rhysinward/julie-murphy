@@ -1,14 +1,15 @@
 ```{=html}
 <%
+const MON = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const short = s => { const p = String(s).split("-").map(Number); return MON[p[1]-1] + " " + p[0]; };
 const ph = s => String(s == null ? "" : s).replace(/\[([^\]]+)\]/g, '<span class="ph">$1</span>');
 %>
 <div class="roles">
-<% for (const r of items) { %>
+<% for (const r of items.filter(i => i.card)) { %>
   <article class="role">
-    <span class="role-kind"><%= r.kind %></span>
-    <h3><%= ph(r.title) %></h3>
-    <p class="role-org"><% if (r.href) { %><a href="<%= r.href %>"><%= ph(r.org) %></a><% } else { %><%= ph(r.org) %><% } %></p>
-    <% if (r.scope) { %><p class="role-scope"><%= ph(r.scope) %></p><% } %>
+        <h3><%= ph(r.title) %></h3>
+    <p class="role-org"><% if (r.href && !r.card_org) { %><a href="<%= r.href %>"><%= ph(r.org) %></a><% } else { %><%= ph(r.card_org || r.org) %><% } %></p>
+    <% if (r.start && r.end === "present" && !r.card_org) { %><p class="role-scope">Since <%= short(r.start) %><%= r.note ? ". " + r.note : "" %></p><% } %>
     <% if (r.text) { %><p class="role-text"><%= ph(r.text) %></p><% } %>
   </article>
 <% } %>

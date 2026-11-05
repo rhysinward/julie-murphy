@@ -1,11 +1,14 @@
 ```{=html}
-<ul class="news">
-<% for (const n of items) { %>
-  <li class="news-item">
-    <span class="news-meta"><%= [n.outlet, n.date].filter(Boolean).join(" · ") %></span>
-    <% if (n.href) { %><a class="news-title" href="<%= n.href %>"><%= n.title %></a><% } else { %><span class="news-title"><%= n.title %></span><% } %>
-    <% if (n.text) { %><p class="news-text"><%= n.text %></p><% } %>
-  </li>
+<%
+const row = n => `<li class="news-item"><span class="news-meta">${[n.outlet, n.when].filter(Boolean).join(", ")}</span>${n.href ? `<a class="news-title" href="${n.href}">${n.title}</a>` : `<span class="news-title">${n.title}</span>`}${n.text ? `<p class="news-text">${n.text}</p>` : ""}</li>`;
+const lead = items.filter(n => n.lead);
+const rest = items.filter(n => !n.lead);
+%>
+<ul class="news"><%= lead.map(row).join("") %></ul>
+<% if (rest.length) { %>
+<details class="news-more">
+  <summary><span class="if-closed">Show <%= rest.length %> more</span><span class="if-open">Show fewer</span></summary>
+  <ul class="news"><%= rest.map(row).join("") %></ul>
+</details>
 <% } %>
-</ul>
 ```

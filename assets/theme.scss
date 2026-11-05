@@ -16,8 +16,7 @@ $footer-bg: #F6F3EE;
 
 /*-- scss:rules --*/
 
-// Concept: a departures board written by an editor. Warm paper, deep navy ink,
-// a sky blue for links and a vermilion accent borrowed from a boarding-pass stub.
+// Warm paper, deep navy ink, a sky blue for links and one vermilion accent.
 
 :root {
   --paper: #F6F3EE;
@@ -110,10 +109,8 @@ p, li { text-wrap: pretty; }
 .hero-text { min-width: 0; }
 .eyebrow {
   display: inline-block;
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: 0.95rem;
+  font-weight: 500;
   color: var(--coral);
 }
 .hero h1 {
@@ -189,9 +186,8 @@ p, li { text-wrap: pretty; }
 .quote-band blockquote p { margin: 0; }
 
 .roles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
-.role { min-width: 0; background: var(--paper); border: 1px solid var(--rule); border-radius: 14px; padding: 1.25rem 1.35rem; }
-.role-kind { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--coral); }
-.role h3 { font-size: 1.3rem; font-weight: 500; margin: 0.45rem 0 0.25rem; }
+.role { min-width: 0; border-top: 2px solid var(--ink); padding-top: 1rem; }
+.role h3 { font-size: 1.3rem; font-weight: 500; margin: 0 0 0.25rem; }
 .role-org { margin: 0; font-weight: 500; }
 .role-org a { color: var(--ink); text-decoration-color: var(--rule-strong); }
 .role-org a:hover { color: var(--coral); }
@@ -209,7 +205,7 @@ p, li { text-wrap: pretty; }
 
 .news { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.9rem; }
 .news-item { border-left: 2px solid var(--rule-strong); padding: 0.15rem 0 0.15rem 1rem; }
-.news-meta { display: block; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); }
+.news-meta { display: block; font-size: 0.86rem; color: var(--ink-2); }
 .news-title { font-weight: 600; }
 .news-text { margin: 0.25rem 0 0; color: var(--ink-2); font-size: 0.95rem; }
 
@@ -277,3 +273,497 @@ p, li { text-wrap: pretty; }
 
 // Keep map labels legible when the map shrinks on phones.
 @media (max-width: 767.98px) { .routes .code { font-size: 17px; } }
+
+
+// 7. CV update: impact list, network web, career detail ----------------------
+
+.glance.glance-four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.impact ol { list-style: none; counter-reset: impact; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem 2rem; }
+.impact li { padding: 0.9rem 0; border-top: 1px solid var(--rule); }
+.impact li strong { display: block; font-weight: 600; margin-bottom: 0.2rem; }
+.career-points { margin: 0.5rem 0 0; padding-left: 1.1rem; font-size: 0.95rem; }
+.career-points li { margin-bottom: 0.25rem; }
+.routes .web { fill: none; stroke: var(--rule-strong); stroke-width: 1; stroke-dasharray: 2 5; opacity: 0.8; }
+.routes .arc-org { stroke: var(--coral); opacity: 0.55; }
+.routes .node-org { fill: var(--paper); stroke: var(--coral); stroke-width: 2.2; }
+.routes .org, .routes .partner { font-family: var(--font-body); font-size: 14px; font-weight: 600; fill: var(--ink); paint-order: stroke; stroke: var(--paper); stroke-width: 4px; stroke-linejoin: round; }
+.routes .partner { font-weight: 500; fill: var(--ink-2); }
+@media (max-width: 991.98px) { .glance.glance-four { grid-template-columns: repeat(2, minmax(0, 1fr)); } .glance-four .stat:nth-child(3) { border-left: 0; padding-left: 0; } }
+@media (max-width: 767.98px) {
+  .impact ol { grid-template-columns: minmax(0, 1fr); }
+  .glance.glance-four { grid-template-columns: minmax(0, 1fr); }
+  .routes .org, .routes .partner { font-size: 17px; }
+}
+
+
+// 8. Career timeline ----------------------------------------------------------
+// Every position is one number: a month counted from Sep 1987, as a share of --total.
+// The template writes --s and --e; the script writes --t. Layout needs no script.
+
+.ct {
+  @include dark-tokens;                 // text, links and the focus ring flip on the band
+  --ct-bg: #13213A;
+  --ct-text: #F6F3EE;
+  --ct-text-2: #A7B1C1;
+  --ct-block: #F6F3EE;
+  --ct-block-early: #BDB3A3;
+  --ct-block-off: #4E5E7B;
+  --ct-edge: #8B93A1;
+  --ct-ink: #13213A;
+  --ct-ink-2: #4A5468;
+  --ct-rail: #8DBCE3;
+  --ct-rail-off: #5F7C9C;
+  --ct-now: #F0906F;
+  --ct-hair: rgba(246, 243, 238, .16);
+  --ct-tick: rgba(246, 243, 238, .42);
+  --ct-bandline: transparent;
+  --plot: min(100vw - 5rem, 1320px);
+  --claim: calc(var(--plot) * .38);
+  --x-t: calc(var(--plot) * var(--t) / var(--total));
+  --thumb: 1.35rem;
+
+  position: relative;
+  background: var(--ct-bg);
+  color: var(--ct-text);
+  border-image: conic-gradient(var(--ct-bg) 0 0) fill 0 / 0 / 0 100vmax;
+  padding-block: clamp(2.4rem, 4vw, 3.3rem);
+  font-size: 1rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .ct { --ct-bg: #1B2B49; --ct-block: #D9D4CA; --ct-block-early: #B3AA9B; --ct-bandline: #3B4862; }
+}
+:root[data-theme="dark"] .ct { --ct-bg: #1B2B49; --ct-block: #D9D4CA; --ct-block-early: #B3AA9B; --ct-bandline: #3B4862; }
+.ct::before, .ct::after {
+  content: ""; position: absolute; left: 0; right: 0; height: 1px;
+  border-image: conic-gradient(var(--ct-bandline) 0 0) fill 0 / 0 / 0 100vmax;
+}
+.ct::before { top: 0; }
+.ct::after { bottom: 0; }
+
+.ct-plot {
+  width: var(--plot);
+  margin-inline: calc((100% - var(--plot)) / 2);
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 5fr) minmax(0, 4fr);
+  column-gap: clamp(1.5rem, 3vw, 3rem);
+  grid-template-areas:
+    "top top top"
+    "ruler ruler ruler"
+    "ana ana ana"
+    "trunk trunk trunk"
+    "when role side"
+    "all all all"
+    "und und und";
+}
+.ct-if-live, .ct-if-date { display: none; }
+.ct-if-all { display: block; }
+.ct.is-live .ct-step.ct-if-live { display: flex; }
+.ct.is-live .ct-when.ct-if-live, .ct.is-live .ct-allbar.ct-if-live { display: block; }
+.ct.is-live span.ct-if-live { display: inline; }
+.ct.is-live:not(.is-all) .ct-if-all { display: none; }
+.ct.is-live:not(.is-all) .ct-if-date { display: inline; }
+
+// Claim, in the empty years -------------------------------------------------------
+
+.ct-head { grid-area: top; align-self: start; width: var(--claim); position: relative; z-index: 1; padding-bottom: 1rem; }
+.ct-head h2 { margin: 0 0 .7rem; font-family: var(--font-display); font-size: clamp(1.85rem, 1.1rem + 1.75vw, 2.72rem); font-weight: 500; line-height: 1.08; letter-spacing: -.022em; color: var(--ct-text); }
+.ct-reach { margin: 0 0 .55rem; line-height: 1.5; }
+.ct-how { margin: 0; font-size: .92rem; line-height: 1.45; color: var(--ct-text-2); }
+.ct-step { gap: .4rem; margin-top: .8rem; }
+.ct-btn {
+  appearance: none; background: transparent; color: var(--ct-text);
+  border: 1px solid var(--ct-tick); border-radius: 3px;
+  padding: .3rem .7rem; min-height: 2rem;
+  font: 500 .85rem/1.3 var(--font-body); cursor: pointer;
+}
+.ct-btn:hover { border-color: var(--ct-text); }
+.ct-btn[aria-disabled="true"] { color: var(--ct-text-2); border-color: var(--ct-hair); cursor: default; }
+
+// Shared control resets. Outline is left alone so the global focus ring still applies.
+.ct-hit, .ct-moment {
+  appearance: none; background: none; border: 0; padding: 0; margin: 0;
+  font: inherit; color: inherit; text-align: inherit; text-decoration: none; cursor: pointer;
+}
+.ct-hit:hover, .ct-moment:hover { color: inherit; }
+
+// The line: one segment per row, all at the same x, so nothing needs measuring.
+.ct-seg {
+  display: none; position: absolute; top: 0; bottom: 0;
+  left: var(--x-t); width: 2px; margin-left: -1px;
+  background: var(--ct-now); pointer-events: none;
+}
+
+// Industry rails --------------------------------------------------------------------
+
+.ct-railset { grid-area: top; align-self: end; }
+.ct-rails-title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; margin: 0; }
+.ct-rails { list-style: none; margin: 0; padding: 0; }
+.ct-row {
+  position: relative; display: flex;
+  min-height: 2rem;
+  padding-left: calc(var(--claim) + 1rem);
+  padding-right: calc(var(--plot) * (var(--total) - var(--e)) / var(--total));
+  --w: calc(var(--plot) * (var(--e) - var(--s)) / var(--total));
+}
+.ct-row.is-open { --w: 2.6rem; padding-right: calc(var(--plot) * (var(--total) - var(--s)) / var(--total) - var(--w)); }
+.ct-row .ct-hit { margin-left: auto; display: flex; align-items: center; justify-content: flex-end; gap: .6rem; min-height: 2rem; max-width: 100%; }
+.ct-row .ct-lbl { flex: 0 1 auto; min-width: 0; font-size: .86rem; line-height: 1.3; color: var(--ct-text-2); text-align: right; }
+.ct-row.is-strong .ct-lbl { color: var(--ct-text); font-weight: 600; }
+.ct-row .ct-track { flex: none; width: var(--w); display: flex; align-items: center; }
+.ct-row .ct-bar { display: block; width: 100%; height: .7rem; background: var(--ct-rail); border-radius: 2px; transition: height .15s ease; }
+.ct-row.is-ended .ct-bar { background: var(--ct-rail-off); }
+.ct-row.is-open .ct-bar { background: linear-gradient(90deg, var(--ct-rail) 25%, transparent); }
+@media (hover: hover) { .ct-row .ct-hit:hover .ct-lbl { color: var(--ct-text); text-decoration: underline; text-underline-offset: .2em; } }
+.ct.is-live .ct-row.is-started .ct-seg { display: block; box-shadow: 1.5px 0 0 var(--ct-bg), -1.5px 0 0 var(--ct-bg); z-index: 1; }
+
+.ct.is-moved .ct-row .ct-bar { background: var(--ct-rail-off); }
+.ct.is-moved .ct-row.is-open .ct-bar { background: linear-gradient(90deg, var(--ct-rail-off) 25%, transparent); }
+.ct.is-moved .ct-row.is-active .ct-bar { background: var(--ct-rail); height: 1.15rem; }
+.ct.is-moved .ct-row.is-open.is-active .ct-bar { background: linear-gradient(90deg, var(--ct-rail) 25%, transparent); }
+.ct.is-moved .ct-row.is-active .ct-lbl { color: var(--ct-text); }
+
+// Ruler and slider ------------------------------------------------------------------
+
+.ct-ruler { --axis-y: 2.65rem; grid-area: ruler; position: relative; height: 4.45rem; }   // the flag clears the thumb
+.ct-scale { position: absolute; inset: 0; }
+.ct-axis {
+  position: absolute; left: 0; right: 0; top: var(--axis-y); height: .7rem;
+  border-top: 1px solid var(--ct-tick);
+  background-image: linear-gradient(90deg, var(--ct-tick) 1px, transparent 1px), linear-gradient(90deg, var(--ct-tick) 1px, transparent 1px);
+  background-repeat: repeat-x;
+  background-size: calc(var(--plot) * 12 / var(--total)) .35rem, calc(var(--plot) * 60 / var(--total)) .7rem;
+  background-position: calc(var(--plot) * 4 / var(--total)) 0, calc(var(--plot) * 28 / var(--total)) 0;
+}
+.ct-year { position: absolute; top: calc(var(--axis-y) + .65rem); left: calc(var(--plot) * var(--m) / var(--total)); transform: translateX(-50%); font-size: .8rem; line-height: 1.2; color: var(--ct-text-2); font-variant-numeric: tabular-nums; }
+.ct-year.is-first { left: 0; transform: none; }
+@media (max-width: 991.98px) { .ct-year.is-tight { display: none; } }
+.ct-flag {
+  position: absolute; top: .35rem; z-index: 3;
+  left: clamp(2.5rem, var(--x-t), var(--plot) - 2.5rem);
+  transform: translateX(-50%);
+  padding: .2rem .5rem; border-radius: 3px;
+  background: var(--ct-now); color: var(--ct-ink);
+  font-size: .8rem; font-weight: 600; line-height: 1.2; white-space: nowrap; font-variant-numeric: tabular-nums;
+}
+.ct-range {
+  --thumb-px: 21.6;
+  position: absolute; z-index: 4; left: calc(var(--thumb) / -2); width: calc(100% + var(--thumb));
+  top: calc(var(--axis-y) - 22px); height: 44px; margin: 0; padding: 0;
+  appearance: none; -webkit-appearance: none; background: transparent; cursor: grab; touch-action: pan-y;
+}
+.ct-range:active { cursor: grabbing; }
+.ct-range:focus { outline: none; }
+.ct-range::-webkit-slider-runnable-track { height: 44px; background: transparent; }
+.ct-range::-moz-range-track { height: 44px; background: transparent; }
+.ct-range::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; box-sizing: border-box;
+  width: var(--thumb); height: var(--thumb); margin-top: calc(22px - var(--thumb) / 2);
+  border-radius: 50%; background: var(--ct-now); border: 3px solid var(--ct-bg);
+}
+.ct-range::-moz-range-thumb { box-sizing: border-box; width: var(--thumb); height: var(--thumb); border-radius: 50%; background: var(--ct-now); border: 3px solid var(--ct-bg); }
+.ct-range:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 2px var(--ct-text); }
+.ct-range:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 2px var(--ct-text); }
+.ct.is-live .ct-ruler > .ct-seg { display: block; z-index: 0; }
+.ct-scale { z-index: 1; }
+
+// ANA rule --------------------------------------------------------------------------
+
+.ct-anarow { grid-area: ana; position: relative; }
+.ct-ana {
+  margin: 0 0 0 calc(var(--plot) * var(--ana) / var(--total));
+  border-top: 2px solid var(--ct-text); border-left: 2px solid var(--ct-text);
+  padding: .2rem 0 .3rem .45rem; line-height: 1.2;
+}
+.ct-ana > span { position: relative; z-index: 2; background: var(--ct-bg); padding-right: .35rem; }
+.ct-ana-name { font-family: var(--font-display); font-weight: 500; font-size: 1.08rem; }
+.ct-ana-since { font-size: .84rem; color: var(--ct-text-2); margin-left: .3rem; }
+.ct.is-live .ct-anarow > .ct-seg { display: block; }
+
+// Airline blocks --------------------------------------------------------------------
+
+.ct-trunk {
+  grid-area: trunk; position: relative; list-style: none; margin: 0 0 1.5rem; padding: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--total), minmax(0, 1fr));
+  grid-template-rows: minmax(7.3rem, auto) auto;
+}
+.ct-role > .ct-seg { grid-row: 1 / 2; grid-column: 1; left: calc(var(--plot) * (var(--t) - var(--s)) / var(--total)); background: var(--ct-ink); z-index: 1; }
+.ct.is-moved .ct-role.is-active > .ct-seg { display: block; }
+
+.ct-role {
+  --fill: var(--ct-block); --on: var(--ct-ink); --on-2: var(--ct-ink-2);
+  grid-column: calc(var(--s) + 1) / calc(var(--e) + 1); grid-row: 1 / 3;
+  display: grid; grid-template-rows: subgrid; grid-template-columns: minmax(0, 1fr);
+  padding-right: 2px; min-width: 0; position: relative;
+}
+// A hanging label sits over the next role's button, so it has to be on top to take its own clicks.
+@media (min-width: 768px) { .ct-role.is-lead { z-index: 1; } }
+.ct-role.is-early { --fill: var(--ct-block-early); --on-2: var(--ct-ink); }
+.ct-role.is-current { --fill: var(--ct-now); --on-2: var(--ct-ink); }
+.ct.is-moved .ct-role { --fill: var(--ct-block-off); --on: var(--ct-text); --on-2: var(--ct-text); }
+.ct.is-moved .ct-role.is-active { --fill: var(--ct-block); --on: var(--ct-ink); --on-2: var(--ct-ink-2); }
+
+.ct-role > .ct-hit { grid-row: 1 / 3; grid-column: 1; display: grid; grid-template-rows: subgrid; grid-template-columns: minmax(0, 1fr); color: var(--on); position: static; }
+.ct-fill { grid-area: 1 / 1; display: block; background: var(--fill); border-radius: 2px; transition: filter .12s ease; }
+.ct.is-moved .ct-role:not(.is-active) .ct-fill { box-shadow: inset 0 0 0 1px var(--ct-edge); }
+@media (hover: hover) { .ct-role > .ct-hit:hover .ct-fill { filter: brightness(1.06); } }
+
+.ct-in {
+  grid-area: 1 / 1; position: relative; z-index: 2; container-type: inline-size;
+  display: flex; flex-direction: column; gap: .25rem; padding: .5rem .55rem .4rem; min-width: 0;
+}
+@media (min-width: 768px) { .ct-role.has-moments .ct-lbl { margin-bottom: 2.9rem; } }
+.ct-role.is-lead .ct-in { padding-inline: .3rem; justify-content: flex-end; }
+.ct-in .ct-lbl { display: block; font-size: .93rem; line-height: 1.26; font-weight: 600; }
+.ct-in .ct-lbl span span, .ct-shift > span, .ct-dates > span { background: var(--fill); box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.ct-emp { display: block; font-family: var(--font-display); font-weight: 500; font-size: 1.02rem; line-height: 1.2; margin-bottom: .2rem; }
+.ct-title { display: block; }
+.ct-in .ct-meta, .ct-track { display: none; }
+.ct-role > .ct-hit .ct-track { display: none; }
+.ct-shift { display: none; font-size: .9rem; line-height: 1.35; font-weight: 400; color: var(--on); max-width: 34rem; }
+.ct-dates { margin-top: auto; display: flex; justify-content: space-between; gap: .3rem; font-size: .76rem; line-height: 1.25; color: var(--on-2); font-variant-numeric: tabular-nums; }
+.ct-today { font-weight: 600; }
+.ct-role.is-lead .ct-dates { flex-direction: column; gap: 0; }
+@container (min-width: 20rem) { .ct-shift { display: block; } }
+@container (max-width: 6.9rem) { .ct-to { display: none; } .ct-dates { font-size: .72rem; white-space: nowrap; } }
+@container (max-width: 3.9rem) { .ct-role:not(.is-current) .ct-dates { display: none; } .ct-dates > span:first-child { display: none; } .ct-to-word { display: none; } .ct-today { text-transform: capitalize; } }
+
+// Short roles hang their label below the block.
+.ct-role.is-lead > .ct-hit > .ct-lbl {
+  grid-row: 2; grid-column: 1; width: max-content; max-width: min(21rem, var(--plot) * .36); padding-top: .55rem; position: relative;
+  color: var(--ct-text); font-weight: 600; font-size: .93rem; line-height: 1.26;
+}
+.ct-role.is-lead > .ct-hit > .ct-lbl::before { content: ""; position: absolute; top: 0; left: .4rem; width: 1px; height: .45rem; background: var(--ct-tick); }
+.ct-role.is-lead .ct-lbl .ct-meta { display: block; font-weight: 400; font-size: .84rem; line-height: 1.3; color: var(--ct-text-2); margin-top: .1rem; }
+.ct-role.is-current > .ct-hit > .ct-lbl { justify-self: end; text-align: right; font-size: 1.25rem; line-height: 1.2; max-width: min(30rem, var(--plot) * .42); }
+.ct-role.is-current > .ct-hit > .ct-lbl::before { left: auto; right: .4rem; }
+.ct-role.is-current .ct-lbl .ct-meta { font-size: .9rem; margin-top: .25rem; }
+
+// Moments: siblings of the block's button, never inside it.
+.ct-moments { grid-row: 1; grid-column: 1; position: relative; z-index: 3; align-self: end; height: 2.4rem; margin-bottom: 1.6rem; pointer-events: none; }
+.ct-moment { position: absolute; bottom: 0; left: calc((var(--ms) - var(--s)) / (var(--e) - var(--s)) * 100%); min-height: 24px; display: block; pointer-events: auto; color: var(--on); padding-top: .55rem; white-space: nowrap; }
+@media (min-width: 768px) { .ct-moment:not(:last-child) { white-space: normal; max-width: calc(var(--plot) * var(--room) / var(--total)); } }
+.ct-mark { position: absolute; top: 0; left: 0; height: .4rem; width: 2px; background: var(--on); }
+.ct-moment.is-year .ct-mark { width: calc(var(--plot) * 12 / var(--total)); }
+.ct-moment-lbl { display: block; font-size: .78rem; font-weight: 500; line-height: 1.25; background: var(--fill); padding-right: .2rem; }
+.ct-moment-date { display: none; }
+@media (hover: hover) { .ct-moment:hover .ct-moment-lbl { text-decoration: underline; text-underline-offset: .15em; } }
+
+// Inset ring on blocks, so it stays on the block's own colour.
+.ct-role > .ct-hit:focus-visible { outline: none; }
+.ct-role > .ct-hit:focus-visible .ct-fill { outline: 2px solid var(--on); outline-offset: -5px; }
+.ct-role.is-lead > .ct-hit:focus-visible > .ct-lbl { outline: 2px solid var(--ct-now); outline-offset: 2px; }
+.ct-moment:focus-visible { outline: 2px solid var(--on); outline-offset: 1px; }
+
+// The slot only opens on phones.
+.ct-slot { display: none; }
+
+// Panel: the same list as the full history --------------------------------------------
+
+.ct-when { grid-area: when; }
+.ct-date { margin: 0 0 .55rem; font-family: var(--font-display); font-weight: 500; font-size: clamp(2.4rem, 1.6rem + 1.6vw, 3.3rem); line-height: 1.02; letter-spacing: -.025em; }
+.ct-date span { display: block; }
+.ct-tally { margin: 0; font-size: .95rem; line-height: 1.5; color: var(--ct-text-2); }
+.ct-tally b { font-weight: 500; color: var(--ct-text); }
+.ct-readout { display: none; }
+
+.ct-details { grid-area: role; min-width: 0; min-height: 15rem; }
+.ct-side { grid-area: side; min-width: 0; }
+.ct-details p.ct-if-all, .ct-side-title { font-family: var(--font-body); font-size: .95rem; font-weight: 500; letter-spacing: 0; line-height: 1.3; color: var(--ct-text-2); margin: 0 0 .45rem; }
+.ct-entries, .ct-alongside, .ct-moments-list { list-style: none; margin: 0; padding: 0; }
+.ct.is-live:not(.is-all) .ct-entry:not(.is-shown) { display: none; }
+.ct-entry h3 { font-family: var(--font-body); font-size: 1.22rem; font-weight: 600; line-height: 1.25; letter-spacing: 0; color: var(--ct-text); margin: 0 0 .2rem; }
+.ct-entry-meta { margin: 0 0 .55rem; font-size: .92rem; line-height: 1.4; color: var(--ct-text-2); }
+.ct-entry-shift { font-family: var(--font-display); font-size: 1.12rem; line-height: 1.38; }
+.ct-entry p { margin: 0 0 .5rem; }
+.ct-points { margin: 0; padding-left: 1.05rem; list-style: disc; font-size: .95rem; line-height: 1.5; }
+.ct-points li { margin-bottom: .28rem; }
+.ct-side .ct-entry { padding: .45rem 0; border-top: 1px solid var(--ct-hair); }
+.ct-side .ct-entry.is-picked h4 { color: var(--ct-now); }
+.ct-entry h4 { font-family: var(--font-body); font-size: .95rem; font-weight: 500; line-height: 1.35; letter-spacing: 0; color: var(--ct-text); margin: 0; }
+.ct-side .ct-entry p { margin: 0; font-size: .86rem; line-height: 1.4; color: var(--ct-text-2); }
+.ct-none { margin: 0 0 .4rem; padding: .45rem 0; border-top: 1px solid var(--ct-hair); font-size: .92rem; color: var(--ct-text-2); }
+.ct-nodate, .ct-thatyear { margin-top: 1rem; }
+
+.ct-allbar { grid-area: all; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--ct-hair); }
+.ct-undated { grid-area: und; margin-top: 1.1rem; }
+.ct-undated h3 { font-family: var(--font-body); font-size: .95rem; font-weight: 500; letter-spacing: 0; color: var(--ct-text-2); margin: 0 0 .5rem; }
+.ct-undated ul { list-style: none; margin: 0; padding: 0; columns: 2; column-gap: clamp(1.5rem, 3vw, 3rem); }
+.ct-undated li { break-inside: avoid; padding-bottom: .5rem; font-size: .92rem; line-height: 1.45; color: var(--ct-text-2); }
+.ct-u { color: var(--ct-text); font-weight: 500; }
+
+// Without script: the whole history, plainly.
+.ct:not(.is-live) .ct-role .ct-hit { text-decoration: none; }
+.ct:not(.is-live) .ct-entries > li { margin-bottom: 1.4rem; }
+.ct:not(.is-live) .ct-when { display: none; }
+.ct:not(.is-live) .ct-plot { grid-template-areas: "top top top" "ruler ruler ruler" "ana ana ana" "trunk trunk trunk" "role role side" "und und und"; }
+.ct.is-all .ct-entries > li { margin-bottom: 1.4rem; }
+.ct.is-all .ct-plot { grid-template-areas: "top top top" "ruler ruler ruler" "ana ana ana" "trunk trunk trunk" "when when when" "role role side" "all all all" "und und und"; }
+.ct.is-all .ct-date span { display: inline; }
+
+// Below 992: the claim leaves the empty years ------------------------------------------
+
+@media (max-width: 991.98px) {
+  .ct { --claim: 0px; }
+  .ct-plot { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "head head" "rails rails" "ruler ruler" "ana ana" "trunk trunk" "when when" "role side" "all all" "und und"; }
+  .ct-head { grid-area: head; width: auto; max-width: 36rem; padding-bottom: 1.2rem; }
+  .ct-railset { grid-area: rails; }
+  .ct-row { padding-left: 0; }
+  .ct-when { margin-bottom: 1rem; }
+  .ct-date span { display: inline; }
+  .ct-in .ct-lbl { font-size: .84rem; }
+  .ct-emp { font-size: .92rem; }
+  .ct-role.is-lead > .ct-hit > .ct-lbl { font-size: .86rem; }
+  .ct-role.is-current > .ct-hit > .ct-lbl { font-size: 1.1rem; }
+  .ct-ana-name { font-size: .98rem; }
+  .ct:not(.is-live) .ct-plot { grid-template-areas: "head head" "rails rails" "ruler ruler" "ana ana" "trunk trunk" "role side" "und und"; }
+  .ct.is-all .ct-plot { grid-template-areas: "head head" "rails rails" "ruler ruler" "ana ana" "trunk trunk" "when when" "role side" "all all" "und und"; }
+}
+
+// Phones: rows on one shared scale, not a smaller chart ---------------------------------
+
+@media (max-width: 767.98px) {
+  .ct { --plot: calc(100vw - 2rem); --thumb: 1.65rem; }
+  .ct-range { --thumb-px: 26.4; }
+  .ct-plot, .ct:not(.is-live) .ct-plot, .ct.is-all .ct-plot { display: flex; flex-direction: column; }
+  .ct-head { order: 1; padding-bottom: 1rem; }
+  .ct-when { order: 2; margin-bottom: .3rem; }
+  .ct-ruler { order: 3; margin-bottom: .6rem; }
+  .ct-anarow { order: 4; }
+  .ct-trunk { order: 5; }
+  .ct-railset { order: 6; }
+  .ct-details { order: 7; }
+  .ct-side { order: 8; }
+  .ct-allbar { order: 9; }
+  .ct-undated { order: 10; }
+
+  .ct-date { display: none; }
+  .ct-btn { min-height: 44px; padding-inline: .9rem; }
+  .ct-readout { display: block; margin: 0 0 .15rem; font-weight: 600; font-size: 1rem; line-height: 1.32; }
+  .ct-tally { font-size: .86rem; line-height: 1.4; }
+
+  .ct-year { display: none; }
+  .ct-year.is-decade:not(.is-tight), .ct-year.is-first { display: block; }
+
+  .ct-ana { margin-left: 0; border: 0; padding: 0 0 .15rem; }
+  .ct-ana > span { background: none; }
+  .ct-anarow { padding-bottom: .55rem; }
+  .ct-anarow::after { content: ""; position: absolute; bottom: 0; height: 3px; background: var(--ct-text); left: calc(var(--ana) / var(--total) * 100%); right: 0; }
+  .ct.is-live .ct-seg, .ct.is-moved .ct-role.is-active > .ct-seg, .ct.is-live .ct-row.is-started .ct-seg, .ct.is-live .ct-ruler > .ct-seg, .ct.is-live .ct-anarow > .ct-seg { display: none; }
+
+  .ct-trunk { display: block; margin: 0 0 1.2rem; }
+  .ct-role, .ct-row, .ct-row.is-open { display: block; padding: 0; min-height: 0; position: static; }
+  .ct-role { border-bottom: 1px solid var(--ct-hair); }
+  .ct-role > .ct-hit, .ct-row .ct-hit {
+    display: block; width: 100%; max-width: none; min-height: 44px; margin: 0;
+    padding: .45rem 1.6rem .5rem 0; color: var(--ct-text); position: relative;
+  }
+  .ct-role > .ct-hit:focus-visible, .ct-row .ct-hit:focus-visible { outline: 2px solid var(--ct-now); outline-offset: -2px; }
+  .ct-role > .ct-hit:focus-visible .ct-fill { outline: none; }
+  .ct-fill { display: none; }
+  .ct-role > .ct-hit > .ct-lbl, .ct-in .ct-lbl, .ct-role.is-current > .ct-hit > .ct-lbl, .ct-role.is-lead > .ct-hit > .ct-lbl {
+    display: flex; flex-direction: column; width: auto; max-width: none; padding: 0; text-align: left;
+    font-size: .98rem; line-height: 1.28; font-weight: 600; color: var(--ct-text);
+  }
+  .ct-role.is-current > .ct-hit > .ct-lbl { font-size: 1.14rem; }
+  .ct-role.is-lead > .ct-hit > .ct-lbl::before { display: none; }
+  .ct-title { order: -1; }
+  .ct-emp, .ct-role.is-lead .ct-emp { order: 0; font-family: var(--font-body); font-size: .86rem; font-weight: 400; line-height: 1.32; color: var(--ct-text-2); margin: 0; }
+  .ct-in { display: block; padding: 0; container-type: normal; }
+  .ct-in .ct-lbl span span, .ct-moment-lbl { background: none; }
+  .ct-in .ct-meta, .ct-role.is-lead .ct-lbl .ct-meta, .ct-role.is-current .ct-lbl .ct-meta { display: block; font-size: .86rem; font-weight: 400; line-height: 1.32; color: var(--ct-text-2); margin: 0; }
+  .ct-shift, .ct-dates { display: none !important; }
+  .ct-role > .ct-hit .ct-track, .ct-row .ct-track {
+    display: block; position: relative; width: auto; height: 9px; margin-top: .4rem;
+    background: linear-gradient(var(--ct-hair), var(--ct-hair)) center / 100% 1px no-repeat;
+  }
+  // The button's right padding is for the + sign. The track still runs the full width of the ruler.
+  .ct-role > .ct-hit .ct-track, .ct-row .ct-track { margin-right: -1.6rem; }
+  .ct-role .ct-bar, .ct-row .ct-bar, .ct.is-moved .ct-row.is-active .ct-bar {
+    display: block; position: absolute; top: 0; height: 9px; border-radius: 2px;
+    left: calc(var(--s) / var(--total) * 100%);
+    width: calc((var(--e) - var(--s)) / var(--total) * 100%);
+    background: var(--ct-text);
+  }
+  .ct-role.is-early .ct-bar { background: var(--ct-block-early); }
+  .ct-role.is-current .ct-bar { background: var(--ct-now); }
+  .ct-row .ct-bar, .ct.is-moved .ct-row.is-active .ct-bar { background: var(--ct-rail); }
+  .ct-row.is-ended .ct-bar { background: var(--ct-rail-off); }
+  .ct-row.is-open .ct-bar, .ct.is-moved .ct-row.is-open .ct-bar, .ct.is-moved .ct-row.is-open.is-active .ct-bar { width: 1.6rem; background: linear-gradient(90deg, var(--ct-rail) 25%, transparent); }
+  .ct.is-moved .ct-role:not(.is-active) .ct-bar { background: var(--ct-rail-off); }
+  .ct.is-moved .ct-role:not(.is-active) .ct-title, .ct.is-moved .ct-row:not(.is-active) .ct-lbl { color: var(--ct-text-2); font-weight: 500; }
+  .ct.is-moved .ct-role:not(.is-active) .ct-lbl { color: var(--ct-text-2); }
+  .ct-track::after { content: ""; display: none; position: absolute; top: -3px; bottom: -3px; left: calc(var(--t) / var(--total) * 100%); width: 2px; margin-left: -1px; background: var(--ct-now); box-shadow: 0 0 0 1.5px var(--ct-bg); }
+  .ct.is-moved .ct-track::after { display: block; }
+
+  .ct.is-live .ct-hit[aria-expanded]::after { content: "+"; position: absolute; right: 0; top: .42rem; width: 1.2rem; text-align: center; font-size: 1.2rem; line-height: 1.2; font-weight: 400; color: var(--ct-text-2); }
+  .ct.is-live .ct-hit[aria-expanded="true"]::after { content: "\2212"; }
+
+  .ct-moments { position: static; height: auto; margin: 0 0 .55rem; display: flex; flex-wrap: wrap; gap: .4rem; pointer-events: auto; }
+  .ct-moment { position: static; min-height: 44px; display: inline-flex; align-items: center; padding: .2rem .6rem; color: var(--ct-text); border: 1px solid var(--ct-tick); border-radius: 3px; white-space: normal; }
+  .ct-mark { display: none; }
+  .ct-moment-lbl { font-size: .86rem; }
+  .ct-moment-date { display: inline; }
+  .ct-moment.is-active { border-color: var(--ct-now); }
+  .ct-moment:focus-visible { outline: 2px solid var(--ct-now); }
+
+  .ct-rails-title { position: static; width: auto; height: auto; overflow: visible; clip-path: none; white-space: normal; font-family: var(--font-display); font-size: 1.08rem; font-weight: 500; color: var(--ct-text); margin: 0 0 .25rem; }
+  .ct-railset { margin-bottom: 1rem; }
+  .ct-row { border-bottom: 1px solid var(--ct-hair); }
+  .ct-row .ct-lbl { display: block; text-align: left; font-size: .9rem; line-height: 1.3; font-weight: 500; color: var(--ct-text); }
+  .ct-row.is-strong .ct-lbl { font-weight: 600; }
+
+  // In place. Lists are hidden; the open entry has moved up under its row.
+  .ct-slot { display: block; }
+  .ct-slot .ct-entry { padding: .1rem 0 .9rem; visibility: visible !important; display: block !important; }
+  .ct-slot .ct-entry h3, .ct-slot .ct-entry-meta { display: none; }
+  .ct-slot:empty { display: none; }
+  .ct.is-live:not(.is-all) .ct-details, .ct.is-live:not(.is-all) .ct-side { display: none; }
+  .ct.is-live .ct-when.ct-if-live { display: block; }
+  .ct-details, .ct-side { margin-top: 1rem; min-height: 0; }
+  .ct-allbar { margin-top: 0; }
+  .ct-undated ul { columns: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ct-row .ct-bar, .ct-fill { transition: none; }
+}
+
+@media (forced-colors: active) {
+  .ct { border-image: none; }
+  .ct::before, .ct::after { display: none; }
+  .ct-fill, .ct-bar, .ct-flag { border: 1px solid CanvasText; }
+  .ct-role.is-active .ct-fill { border: 3px solid Highlight; }
+  .ct-row.is-active .ct-bar { forced-color-adjust: none; background: Highlight; }
+  .ct-seg, .ct-mark { forced-color-adjust: none; background: CanvasText; }
+  .ct-range::-webkit-slider-thumb { forced-color-adjust: none; background: Highlight; }
+  .ct-range::-moz-range-thumb { forced-color-adjust: none; background: Highlight; }
+}
+
+@media print {
+  .ct { border-image: none; background: #fff; color: #000; padding-block: 1rem; --ct-text: #000; --ct-text-2: #333; --ct-hair: #bbb; --ink: #000; --sky: #000; --coral: #000; }
+  .ct::before, .ct::after { display: none; }
+  .ct-ruler, .ct-anarow, .ct-trunk, .ct-railset, .ct-when, .ct-allbar, .ct-step, .ct-how span, [data-ct-none], .ct-if-date { display: none !important; }
+  .ct-plot { display: block; width: auto; margin: 0; }
+  .ct-head { width: auto; }
+  .ct-details, .ct-side, .ct-if-all { display: block !important; }
+  .ct-entry { display: block !important; break-inside: avoid; margin-bottom: .8rem; }
+  .ct-entries > li, .ct-alongside > li, .ct-moments-list > li { display: list-item !important; }
+  .ct-nodate, .ct-thatyear { display: block !important; }
+}
+
+// Everything after the band: no rule directly under navy.
+#career + .block { border-top: 0; }
+
+// 9. Speaking extras ----------------------------------------------------------
+
+.news-more { margin-top: 1rem; }
+.news-more summary { cursor: pointer; font-weight: 600; color: var(--sky); padding: 0.35rem 0; }
+.news-more summary:hover { color: var(--coral); }
+.news-more[open] summary { margin-bottom: 0.6rem; }
+.news-more[open] .if-closed, .news-more:not([open]) .if-open { display: none; }
+.bio-block { margin-top: 2.25rem; padding-top: 1.1rem; border-top: 2px solid var(--ink); max-width: 44rem; }
+.bio-block h3 { font-family: var(--font-body); font-weight: 600; font-size: 1.05rem; letter-spacing: 0; margin: 0 0 0.5rem; }
+.bio-block p { margin: 0 0 0.8rem; color: var(--ink-2); }
+.bio-copy { background: transparent; cursor: pointer; }
+.bio-copy[hidden] { display: none; }

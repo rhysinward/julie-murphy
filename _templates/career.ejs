@@ -1,17 +1,188 @@
 ```{=html}
 <%
-const ph = s => String(s == null ? "" : s).replace(/\[([^\]]+)\]/g, '<span class="ph">$1</span>');
+const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const LONG = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const esc = s => String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const parts = s => String(s).split("-").map(Number);
+const hasMonth = s => String(s).includes("-");
+const idx = s => { const p = parts(s); return (p[0] - 1987) * 12 + ((p[1] || 7) - 9); };   // a year-only date lands mid-year
+const short = s => { const p = parts(s); return p[1] ? MON[p[1]-1] + " " + p[0] : String(p[0]); };
+const long = s => { const p = parts(s); return p[1] ? LONG[p[1]-1] + " " + p[0] : String(p[0]); };
+const dur = n => { const y = Math.floor(n/12), m = n%12, a = []; if (y) a.push(y + (y === 1 ? " year" : " years")); if (m) a.push(m + (m === 1 ? " month" : " months")); return a.join(" "); };
+
+const d = new Date();
+const total = (d.getFullYear() - 1987) * 12 + d.getMonth() + 1 - 9;
+const built = MON[d.getMonth()] + " " + d.getFullYear();
+const anaStart = idx("1997-01");
+
+const airline = items.filter(i => i.lane === "airline");
+const industry = items.filter(i => i.lane === "industry");
+const moments = items.filter(i => i.lane === "moment");
+const undated = items.filter(i => i.lane === "undated");
+const noEnd = industry.filter(i => i.end === "unknown");
+const dated = industry.filter(i => i.end !== "unknown");
+const alongside = dated.filter(i => i.strong).concat(dated.filter(i => !i.strong));   // elected roles lead
+
+// A role runs to the start of the next one, so the blocks abut and their lengths sum to the total.
+const byStart = airline.slice().sort((a,b) => idx(a.start) - idx(b.start));
+byStart.forEach((r,n) => { r._s = idx(r.start); r._e = n + 1 < byStart.length ? idx(byStart[n+1].start) : null; r._n = (r._e === null ? total : r._e) - r._s; r._now = r.end === "present"; r._lead = r._now || r._n < 48; r._early = r._s < anaStart; });
+const range = r => short(r.start) + " – " + (r.end === "present" ? "present" : short(r.end));
+const railDates = r => r.end === "present" ? "since " + short(r.start) : r.end === "unknown" ? "from " + short(r.start) + ", since left" : short(r.start) + " – " + short(r.end);
+const years = Math.floor((total + 1) / 12);
 %>
-<ol class="career">
-<% for (const c of items) { %>
-  <li class="career-item<%= c.current ? ' is-current' : '' %>">
-    <div class="career-when"><%= ph(c.when) %></div>
-    <div class="career-body">
-      <h3><%= ph(c.title) %></h3>
-      <p class="career-org"><%= ph(c.org) %></p>
-      <% if (c.text) { %><p class="career-text"><%= ph(c.text) %></p><% } %>
-    </div>
+<section class="ct" aria-labelledby="career-title" style="--total:<%= total %>;--t:<%= total %>;--ana:<%= anaStart %>" data-total="<%= total %>">
+<div class="ct-plot">
+
+<header class="ct-head">
+  <h2 id="career-title"><span data-ct-years><%= years %></span> years in airlines.</h2>
+  <p class="ct-reach">From airline reservations, to sales for the UK, then the UK and Ireland, and now partnerships across Europe as ANA's Head of Trade Relations &amp; Partnerships, EMEA.</p>
+  <p class="ct-how">Drawn to scale.<span class="ct-if-live"> Move the line to any date, or pick a role, to see what I was doing then.</span></p>
+  <div class="ct-step ct-if-live" role="group" aria-label="Move through the timeline">
+    <button type="button" class="ct-btn" data-ct-go="earlier">Earlier</button>
+    <button type="button" class="ct-btn" data-ct-go="later">Later</button>
+    <button type="button" class="ct-btn" data-ct-go="today">Today</button>
+  </div>
+</header>
+
+<div class="ct-ruler">
+  <div class="ct-scale" aria-hidden="true">
+    <span class="ct-flag"><%= built %></span>
+    <span class="ct-axis"></span>
+    <% for (let y = 1990; y <= d.getFullYear(); y += 5) { %><span class="ct-year<%= y % 10 === 0 ? ' is-decade' : '' %><%= y === 1990 ? ' is-tight' : '' %>" style="--m:<%= (y - 1987) * 12 - 8 %>"><%= y %></span><% } %>
+    <span class="ct-year is-first">1987</span>
+  </div>
+  <label class="visually-hidden" for="ct-range">Date on the timeline</label>
+  <input class="ct-range" id="ct-range" type="range" min="0" max="<%= total %>" step="1" value="<%= total %>" hidden>
+  <span class="ct-seg" aria-hidden="true"></span>
+</div>
+
+<div class="ct-when ct-if-live">
+  <p class="ct-date" data-ct-date>Today</p>
+  <p class="ct-tally" data-ct-tally></p>
+  <p class="ct-readout" data-ct-readout></p>
+</div>
+
+<div class="ct-anarow">
+  <p class="ct-ana"><span><span class="ct-ana-name">All Nippon Airways (ANA)</span> <span class="ct-ana-since">since Jan 1997</span></span></p>
+  <span class="ct-seg" aria-hidden="true"></span>
+</div>
+
+<ol class="ct-trunk" role="list" aria-label="Airline roles">
+<% for (const r of airline) { const ms = moments.filter(m => m.parent === r.key && m.label); %>
+  <li class="ct-role<%= r._early ? ' is-early' : '' %><%= r._now ? ' is-current' : '' %><%= r._lead ? ' is-lead' : '' %><%= ms.length ? ' has-moments' : '' %>" style="--s:<%= r._s %>;--e:<%= r._e === null ? 'var(--total)' : r._e %>" data-ct-row="<%= r.key %>">
+    <a class="ct-hit" href="#career-<%= r.key %>" data-ct-pick="<%= r.key %>" aria-label="<%= esc(r.title) %>, <%= esc(r.employer) %><%= r.place ? ', ' + esc(r.place) : '' %>, <%= long(r.start) %> to <%= r._now ? 'today' : long(r.end) %><% if (!r._now) { %>, <%= dur(r._n) %><% } %>">
+      <span class="ct-fill"></span>
+      <% if (r._lead) { %>
+      <span class="ct-lbl">
+        <% if (!r._now) { %><span class="ct-emp"><%= esc(r.employer) %></span><% } %>
+        <span class="ct-title"><%= esc(r.title) %></span>
+        <span class="ct-meta"><%= r._now ? esc(r.employer) + (r.place ? ", " + esc(r.place) + ", " : ", ") : "" %><%= range(r) %></span>
+      </span>
+      <% } %>
+      <span class="ct-in">
+        <% if (!r._lead) { %>
+        <span class="ct-lbl">
+          <% if (r._early) { %><span class="ct-emp"><span><%= esc(r.employer) %></span></span><% } %>
+          <span class="ct-title"><span><%= esc(r.title) %></span></span>
+          <span class="ct-meta"><%= range(r) %></span>
+        </span>
+        <% if (!ms.length) { %><span class="ct-shift"><span><%= esc(r.shift) %></span></span><% } %>
+        <% } %>
+        <span class="ct-dates" aria-hidden="true"><span><%= short(r.start) %></span><% if (r._now) { %><span class="ct-today"><span class="ct-to-word">to </span>today</span><% } else { %><span class="ct-to"><%= short(r.end) %></span><% } %></span>
+      </span>
+      <span class="ct-track"><span class="ct-bar"></span></span>
+    </a>
+    <% if (ms.length) { %><div class="ct-moments">
+      <% ms.forEach((m, n) => { const ym = hasMonth(m.start); const ms0 = ym ? idx(m.start) : idx(m.start + "-01"); const nx = ms[n + 1]; const mn = nx ? (hasMonth(nx.start) ? idx(nx.start) : idx(nx.start + "-01")) : null; %>
+      <a class="ct-moment<%= ym ? '' : ' is-year' %>" href="#career-<%= m.key %>" data-ct-pick="<%= m.key %>" style="--ms:<%= ms0 %><%= mn === null ? '' : ';--room:' + (mn - ms0 - 1) %>" aria-label="<%= esc(m.label) %>: <%= esc(m.title) %>, <%= long(m.start) %>"><span class="ct-mark"></span><span class="ct-moment-lbl"><%= esc(m.label) %><span class="ct-moment-date">, <%= short(m.start) %></span></span></a>
+      <% }); %>
+    </div><% } %>
+    <span class="ct-seg" aria-hidden="true"></span>
+    <div class="ct-slot"></div>
   </li>
 <% } %>
 </ol>
+
+<div class="ct-railset">
+  <h3 class="ct-rails-title" id="ct-rails-title">Industry roles alongside</h3>
+  <ul class="ct-rails" role="list" aria-labelledby="ct-rails-title">
+  <% for (const r of industry) { const s = idx(r.start), open = r.end === "unknown", now = r.end === "present"; %>
+    <li class="ct-row<%= r.strong ? ' is-strong' : '' %><%= open ? ' is-open' : '' %><%= !open && !now ? ' is-ended' : '' %>" style="--s:<%= s %>;--e:<%= now || open ? 'var(--total)' : idx(r.end) + 1 %>" data-ct-row="<%= r.key %>">
+      <a class="ct-hit" href="#career-<%= r.key %>" data-ct-pick="<%= r.key %>" aria-label="<%= esc(r.rail) %>, <%= open ? 'from ' + long(r.start) + ', since left, end date not listed' : now ? 'since ' + long(r.start) : long(r.start) + ' to ' + long(r.end) %>">
+        <span class="ct-lbl"><%= esc(r.rail) %>, <%= railDates(r) %></span>
+        <span class="ct-track"><span class="ct-bar"></span></span>
+      </a>
+      <div class="ct-slot"></div>
+      <span class="ct-seg" aria-hidden="true"></span>
+    </li>
+  <% } %>
+  </ul>
+</div>
+
+<div class="ct-details">
+  <p class="ct-if-all">Airline roles</p>
+  <ol class="ct-entries" role="list">
+  <% for (const r of airline) { %>
+    <li><div class="ct-entry" id="career-<%= r.key %>" data-ct-entry="<%= r.key %>" data-lane="airline" data-s="<%= r._s %>" data-e="<%= r._e === null ? 'now' : r._e %>" data-name="<%= esc(r.title) %><%= r._early || r.employer === 'Air New Zealand' ? ', ' + esc(r.employer) : '' %>">
+      <h3><%= esc(r.title) %></h3>
+      <p class="ct-entry-meta"><%= esc(r.employer) %><%= r.place ? ", " + esc(r.place) : "" %>, <%= range(r) %>, <span<% if (r._now) { %> data-ct-since="<%= r._s %>"<% } %>><%= dur(r._now ? r._n + 1 : r._n) %></span></p>
+      <p class="ct-entry-shift"><%= esc(r.shift) %></p>
+      <% if (r.text) { %><p><%= esc(r.text) %></p><% } %>
+      <% if (r.points) { %><ul class="ct-points"><% for (const p of r.points) { %><li><%= esc(p) %></li><% } %></ul><% } %>
+    </div></li>
+  <% } %>
+  </ol>
+</div>
+
+<div class="ct-side">
+  <h3 class="ct-side-title"><span class="ct-if-date">Alongside</span><span class="ct-if-all">Industry roles alongside</span></h3>
+  <ul class="ct-alongside" role="list">
+  <% for (const r of alongside) { const now = r.end === "present"; %>
+    <li><div class="ct-entry" id="career-<%= r.key %>" data-ct-entry="<%= r.key %>" data-lane="industry" data-s="<%= idx(r.start) %>" data-e="<%= now ? 'now' : idx(r.end) + 1 %>"<% if (r.note) { %> data-more="1"<% } %>>
+      <h4><%= esc(r.title) %><% if (r.href) { %>, <a href="<%= esc(r.href) %>"><%= esc(r.org) %></a><% } else { %>, <%= esc(r.org) %><% } %></h4>
+      <p><%= railDates(r).replace(/^since/, "Since") %><% if (r.note) { %>. <%= esc(r.note) %><% } %></p>
+    </div></li>
+  <% } %>
+  </ul>
+  <p class="ct-none" data-ct-none hidden>No dated industry roles at this point.</p>
+  <% if (noEnd.length) { %>
+  <div class="ct-nodate" data-ct-nodate>
+    <h3 class="ct-side-title">End date not listed</h3>
+    <% for (const r of noEnd) { %>
+    <div class="ct-entry" id="career-<%= r.key %>" data-ct-entry="<%= r.key %>" data-lane="unknown" data-s="<%= idx(r.start) %>" data-e="">
+      <h4><%= esc(r.title) %>, <%= esc(r.org) %></h4>
+      <p>From <%= short(r.start) %>, since left.</p>
+    </div>
+    <% } %>
+  </div>
+  <% } %>
+  <div class="ct-thatyear" data-ct-thatyear>
+    <h3 class="ct-side-title"><span class="ct-if-date">That year</span><span class="ct-if-all">Dated moments</span></h3>
+    <ul class="ct-moments-list" role="list">
+    <% for (const m of moments) { %>
+      <li><div class="ct-entry" id="career-<%= m.key %>" data-ct-entry="<%= m.key %>" data-lane="moment" data-parent="<%= m.parent %>" data-year="<%= parts(m.start)[0] %>"<% if (hasMonth(m.start)) { %> data-s="<%= idx(m.start) %>"<% } %> data-when="<%= short(m.start) %>" data-long="<%= long(m.start) %>" data-name="<%= esc(m.title) %>">
+        <h4><%= esc(m.title) %></h4>
+        <p><%= short(m.start) %>. <%= esc(m.text) %></p>
+      </div></li>
+    <% } %>
+    </ul>
+  </div>
+</div>
+
+<div class="ct-allbar ct-if-live">
+  <button type="button" class="ct-btn" data-ct-all>Show the whole history</button>
+</div>
+
+<div class="ct-undated">
+  <h3>Also</h3>
+  <ul role="list">
+  <% for (const u of undated) { %>
+    <li id="career-<%= u.key %>"><span class="ct-u"><%= esc(u.title) %></span><% if (u.org) { %>: <%= esc(u.org) %><% } %><% if (u.text && !u.card) { %>. <%= esc(u.text) %><% } %></li>
+  <% } %>
+  </ul>
+</div>
+
+<p class="visually-hidden" role="status" data-ct-status></p>
+</div>
+</section>
 ```

@@ -1,0 +1,391 @@
+```{=html}
+<script>
+(function () {
+  // Quarto's listing script expects this on every hash change, and our templates never create it.
+  window['quarto-listings'] = window['quarto-listings'] || {};
+  // The sitemap publishes /index.html, but Quarto's navbar links to the bare folder. Match them,
+  // or the first navbar click reloads the page and loses the date.
+  if (/\/index\.html$/.test(location.pathname)) {
+    history.replaceState(history.state, '', location.pathname.replace(/index\.html$/, '') + location.search + location.hash);
+  }
+
+  var root = document.querySelector('.ct');
+  if (!root) return;
+
+  var LONG = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var SHORT = LONG.map(function (m) { return m.slice(0, 3); });
+  var ANA = +getComputedStyle(root).getPropertyValue('--ana') || 112;
+  var d = new Date();
+  var today = (d.getFullYear() - 1987) * 12 + d.getMonth() + 1 - 9;
+  var phone = window.matchMedia('(max-width: 767.98px)');
+  var calm = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var $ = function (s, el) { return (el || root).querySelector(s); };
+  var $$ = function (s, el) { return Array.prototype.slice.call((el || root).querySelectorAll(s)); };
+
+  function yearOf(t) { return 1987 + Math.floor((t + 8) / 12); }
+  function monthOf(t) { return (t + 8) % 12; }
+  function plural(n, w) { return n + ' ' + w + (n === 1 ? '' : 's'); }
+  function dur(n) {
+    var y = Math.floor(n / 12), m = n % 12, a = [];
+    if (y) a.push(plural(y, 'year'));
+    if (m) a.push(plural(m, 'month'));
+    return a.join(' ');
+  }
+
+  // Links become buttons. Same text, same classes, same data, so the layout does not change.
+  $$('a.ct-hit, a.ct-moment').forEach(function (a) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = a.className;
+    b.setAttribute('aria-label', a.getAttribute('aria-label'));
+    b.dataset.ctPick = a.dataset.ctPick;
+    if (a.getAttribute('style')) b.setAttribute('style', a.getAttribute('style'));
+    while (a.firstChild) b.appendChild(a.firstChild);
+    a.parentNode.replaceChild(b, a);
+  });
+
+  var range = $('.ct-range');
+  var trunk = $('.ct-trunk');
+  // No prototype: keys come from the address bar, and #career-constructor must not match anything.
+  var entries = Object.create(null);
+  var homes = Object.create(null);
+  $$('[data-ct-entry]').forEach(function (el) {
+    var e = el.dataset;
+    entries[e.ctEntry] = {
+      el: el, key: e.ctEntry, lane: e.lane, name: e.name || '',
+      s: e.s === undefined || e.s === '' ? null : +e.s,
+      e: e.e === 'now' ? Infinity : (e.e ? +e.e : null),
+      year: e.year ? +e.year : null, parent: e.parent || null, when: e.when, long: e.long,
+      more: e.more === '1' || e.lane === 'airline' || e.lane === 'moment'
+    };
+    homes[e.ctEntry] = el.parentNode;
+  });
+  var list = Object.keys(entries).map(function (k) { return entries[k]; });
+  var airline = list.filter(function (x) { return x.lane === 'airline'; });
+  var rows = Object.create(null);
+  $$('[data-ct-row]').forEach(function (el) { rows[el.dataset.ctRow] = el; });
+
+  // A date a year-only fact can land on, mid-year, so it never sits in a neighbouring role.
+  function midYear(y) { return (y - 1987) * 12 - 2; }
+  function landing(x) { return x.s !== null ? x.s : midYear(x.year); }
+
+  // A stop is a date when something begins, plus today.
+  var stops = list.filter(function (x) { return x.lane !== 'undated' && (x.s !== null || x.year); }).map(function (x) {
+    return { t: landing(x), yearOnly: x.lane === 'moment' && x.s === null, pick: x.key, rank: x.lane === 'airline' ? 0 : 1 };
+  }).sort(function (a, b) { return a.t - b.t || a.rank - b.rank; }).filter(function (s, i, a) { return !i || s.t !== a[i - 1].t; });
+
+  function roleAt(t) {
+    return airline.filter(function (r) { return r.s <= t && (t < r.e); })[0] || airline[0];
+  }
+  function activeIndustry(t) {
+    return list.filter(function (x) { return x.lane === 'industry' && x.s <= t && t < x.e; });
+  }
+
+  var state = { t: today, yearOnly: false, pick: null, open: null, all: false };
+  var live = $('[data-ct-status]');
+  var liveTimer, glideFrame;
+
+  function dateText(s) {
+    if (s.t >= today) return 'Today';
+    if (s.yearOnly) return String(yearOf(s.t));
+    return LONG[monthOf(s.t)] + ' ' + yearOf(s.t);
+  }
+  function summary(s) {
+    var p = s.pick && entries[s.pick];
+    if (p && p.lane === 'moment') return (p.s !== null ? p.long : p.year) + ': ' + p.name + '.';
+    var r = roleAt(s.t), n = activeIndustry(s.t).length;
+    return dateText(s) + ': ' + r.name + (n ? ', plus ' + plural(n, 'industry role') : '') + '.';
+  }
+
+  function paintLine(v) {
+    root.style.setProperty('--t', v);
+    range.value = v;
+  }
+  function glide(to) {
+    cancelAnimationFrame(glideFrame);
+    var from = parseFloat(root.style.getPropertyValue('--t'));
+    if (calm.matches || isNaN(from) || from === to) { paintLine(to); return; }
+    var start = null;
+    function step(now) {
+      if (start === null) start = now;
+      var p = Math.min(1, (now - start) / 250), e = 1 - Math.pow(1 - p, 3);
+      paintLine(p === 1 ? to : from + (to - from) * e);
+      if (p < 1) glideFrame = requestAnimationFrame(step);
+    }
+    glideFrame = requestAnimationFrame(step);
+  }
+
+  function render(source) {
+    var s = state, t = s.t, atToday = t >= today;
+    root.classList.toggle('is-moved', !atToday);
+    root.classList.toggle('is-all', s.all);
+
+    var flag = atToday ? 'Today' : s.yearOnly ? String(yearOf(t)) : SHORT[monthOf(t)] + ' ' + yearOf(t);
+    $('.ct-flag').textContent = flag;
+
+    var dateEl = $('[data-ct-date]');
+    if (atToday || s.yearOnly) dateEl.textContent = dateText(s);
+    else dateEl.innerHTML = '<span>' + LONG[monthOf(t)] + '</span> <span>' + yearOf(t) + '</span>';
+
+    // Both tallies count the month on show, as role lengths do, so the two always agree.
+    var inAir = t === 0 ? 'First month' : (s.yearOnly ? 'About ' + plural(yearOf(t) - 1987, 'year') : dur(t + 1));
+    var withAna = t === ANA ? 'First month' : (s.yearOnly ? 'About ' + plural(yearOf(t) - 1997, 'year') : dur(t - ANA + 1));
+    $('[data-ct-tally]').innerHTML = '<b>' + inAir + '</b> in airlines' + (t >= ANA ? '<br><b>' + withAna + '</b> with ANA' : '');
+
+    var text = summary(s);
+    $('[data-ct-readout]').textContent = text;
+    range.setAttribute('aria-valuetext', text);
+
+    var role = roleAt(t);
+    var active = activeIndustry(t);
+    airline.forEach(function (r) {
+      var on = r === role;
+      var row = rows[r.key];
+      row.classList.toggle('is-active', on);
+      var b = $('.ct-hit', row);
+      if (on) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');
+    });
+    list.filter(function (x) { return x.lane === 'industry' || x.lane === 'unknown'; }).forEach(function (r) {
+      var row = rows[r.key];
+      var on = active.indexOf(r) > -1 || s.pick === r.key;
+      row.classList.toggle('is-active', on);
+      row.classList.toggle('is-started', r.s <= t);
+      var b = $('.ct-hit', row);
+      if (active.indexOf(r) > -1) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');
+    });
+    $$('.ct-moment').forEach(function (m) {
+      var x = entries[m.dataset.ctPick];
+      var on = yearOf(t) === x.year && (x.s !== null ? t === x.s || s.pick === x.key : true);
+      m.classList.toggle('is-active', on);
+      if (s.pick === x.key) m.setAttribute('aria-current', 'true'); else m.removeAttribute('aria-current');
+    });
+
+    // What is shown for this date.
+    var y = yearOf(t), shown = 0, inYear = 0;
+    list.forEach(function (x) {
+      var on;
+      if (s.all) on = true;
+      else if (x.lane === 'airline') on = x === role;
+      else if (x.lane === 'industry') { on = active.indexOf(x) > -1; if (on) shown++; }
+      else if (x.lane === 'unknown') on = x.s <= t;
+      else { on = x.year === y; if (on) inYear++; }
+      x.el.classList.toggle('is-shown', on);
+      x.el.classList.toggle('is-picked', s.pick === x.key);
+      if (homes[x.key].tagName === 'LI') homes[x.key].hidden = !on;   // no empty list items
+    });
+    $('[data-ct-none]').hidden = s.all || shown > 0;
+    $$('[data-ct-nodate]').forEach(function (el) {
+      el.hidden = !s.all && !$$('.ct-entry.is-shown', el).length;
+    });
+    $('[data-ct-thatyear]').hidden = !s.all && !inYear;
+
+    $$('[data-ct-go]').forEach(function (b) {
+      var go = b.dataset.ctGo;
+      var off = go === 'earlier' ? t <= 0 : atToday;
+      b.setAttribute('aria-disabled', off ? 'true' : 'false');
+    });
+
+    place();
+
+    clearTimeout(liveTimer);
+    if (source !== 'slider' && source !== 'init' && document.activeElement !== range) {
+      liveTimer = setTimeout(function () { live.textContent = text; }, 500);
+    }
+  }
+
+  // Phones open an entry in place, under its own row. The entry node moves. It is never copied.
+  function place() {
+    var inPlace = phone.matches && !state.all;
+    list.forEach(function (x) {
+      var want = homes[x.key];
+      if (inPlace && state.open === x.key) {
+        var row = rows[x.key] || rows[x.parent];
+        if (row) want = $('.ct-slot', row);
+      }
+      if (x.el.parentNode !== want) want.appendChild(x.el);
+    });
+    $$('[data-ct-pick]').forEach(function (b) {
+      if (inPlace && entries[b.dataset.ctPick].more) b.setAttribute('aria-expanded', b.dataset.ctPick === state.open ? 'true' : 'false');
+      else b.removeAttribute('aria-expanded');
+    });
+    $$('[data-ct-entry]').forEach(function (el) {
+      if (inPlace && el.dataset.ctEntry === state.open) el.classList.add('is-shown');
+    });
+  }
+
+  // Hold a row still while things above it open or close.
+  function keepPut(el, fn) {
+    var y = el.getBoundingClientRect().top;
+    fn();
+    var dy = el.getBoundingClientRect().top - y;
+    if (dy) window.scrollBy({ top: dy, behavior: 'instant' });
+  }
+
+  function set(next, source, opts) {
+    state.t = next.t;
+    state.yearOnly = !!next.yearOnly;
+    state.pick = next.pick || null;
+    if (next.open !== undefined) state.open = next.open;
+    render(source);
+    if (opts && opts.glide) glide(state.t); else { cancelAnimationFrame(glideFrame); paintLine(state.t); }
+  }
+
+  function pick(key, toggle) {
+    var x = entries[key];
+    if (!x) return;
+    var el = rows[key] ? $('.ct-hit', rows[key]) : (rows[x.parent] ? $('.ct-hit', rows[x.parent]) : range);
+    if (toggle && phone.matches && !state.all && state.open === key) {
+      keepPut(el, function () { state.open = null; render('pick'); });
+      return;
+    }
+    var t, yearOnly = false;
+    if (x.lane === 'airline') t = x.e === Infinity ? today : x.e - 1;
+    else if (x.lane === 'moment' && x.s === null) { t = midYear(x.year); yearOnly = true; }
+    else t = x.s;
+    keepPut(el, function () { set({ t: t, yearOnly: yearOnly, pick: key, open: x.more ? key : roleAt(t).key }, 'pick', { glide: true }); });
+  }
+
+  function go(where) {
+    var t = state.t, stop;
+    if (where === 'today') stop = { t: today };
+    else if (where === 'earlier') stop = stops.filter(function (s) { return s.t < t; }).pop();
+    else stop = stops.filter(function (s) { return s.t > t; })[0] || { t: today };
+    if (!stop) return;
+    var open = stop.pick && entries[stop.pick].more ? stop.pick : roleAt(stop.t).key;
+    set({ t: stop.t, yearOnly: stop.yearOnly, pick: stop.pick, open: open }, 'step', { glide: true });
+  }
+
+  function syncLayout() {
+    // Newest first reads top to bottom on phones. Oldest first tabs left to right on the chart.
+    var roles = $$('.ct-role', trunk), wantOldestFirst = !phone.matches;
+    var isOldestFirst = +roles[0].style.getPropertyValue('--s') === 0;
+    if (wantOldestFirst !== isOldestFirst) {
+      var focused = document.activeElement;
+      roles.reverse().forEach(function (r) { trunk.appendChild(r); });
+      if (focused && focused !== document.activeElement && root.contains(focused)) focused.focus({ preventScroll: true });
+    }
+    // The chart does not track which row is open, so work it out again from the date.
+    var p = state.pick && entries[state.pick];
+    if (!(p && p.more)) state.open = roleAt(state.t).key;
+    render('init');
+  }
+
+  // Once someone moves the date themselves, a deep link in the address bar is out of date.
+  function clearHash() {
+    if (location.hash.indexOf('#career-') === 0) history.replaceState(history.state, '', location.pathname + location.search);
+  }
+  function moveTo(v) {
+    v = Math.max(0, Math.min(today, v));
+    clearHash();
+    set({ t: v, open: roleAt(v).key }, 'slider');
+  }
+
+  // Events.
+  root.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-ct-pick]');
+    if (b && b.tagName === 'BUTTON') { clearHash(); pick(b.dataset.ctPick, true); return; }
+    var g = e.target.closest('[data-ct-go]');
+    if (g) { if (g.getAttribute('aria-disabled') !== 'true') { clearHash(); go(g.dataset.ctGo); } return; }
+    var a = e.target.closest('[data-ct-all]');
+    if (a) {
+      keepPut(a, function () {
+        state.all = !state.all;
+        a.textContent = state.all ? 'Show one date at a time' : 'Show the whole history';
+        render('all');
+      });
+    }
+  });
+  range.addEventListener('input', function () {
+    clearHash();
+    set({ t: +range.value, open: state.open }, 'slider');
+  });
+  var changeTimer;
+  range.addEventListener('change', function () {
+    clearTimeout(changeTimer);
+    changeTimer = setTimeout(function () {
+      if (!phone.matches || state.pick) return;   // a pick keeps its own entry open
+      state.open = roleAt(state.t).key;
+      render('slider');
+    }, 250);
+  });
+  range.addEventListener('keydown', function (e) {
+    var by = e.key === 'PageUp' ? 12 : e.key === 'PageDown' ? -12 : 0;
+    if (!by) return;
+    e.preventDefault();
+    moveTo(state.t + by);
+  });
+  // A finger landing on the ruler may only be scrolling the page, and the browser may already
+  // have moved the slider. If the browser takes the touch for a scroll, put the date back.
+  var touch = null;
+  range.addEventListener('pointerdown', function (e) {
+    if (e.pointerType !== 'touch') { touch = null; return; }
+    touch = { x: e.clientX, y: e.clientY, before: { t: state.t, yearOnly: state.yearOnly, pick: state.pick, open: state.open } };
+  });
+  range.addEventListener('pointercancel', function () {
+    if (!touch) return;
+    clearTimeout(changeTimer);
+    set(touch.before, 'slider');
+    touch = null;
+  });
+  range.addEventListener('pointerup', function (e) {
+    if (!touch) return;
+    var moved = Math.abs(e.clientX - touch.x) + Math.abs(e.clientY - touch.y);
+    touch = null;
+    if (moved > 10) return;
+    // iOS Safari does not move a range when its track is tapped.
+    var r = range.getBoundingClientRect();
+    var thumb = parseFloat(getComputedStyle(range).getPropertyValue('--thumb-px')) || 24;
+    moveTo(Math.round((e.clientX - r.left - thumb / 2) / (r.width - thumb) * today));
+  });
+  (phone.addEventListener ? phone.addEventListener.bind(phone, 'change') : phone.addListener.bind(phone))(syncLayout);
+
+  function hashKey() {
+    var key = location.hash.indexOf('#career-') === 0 ? location.hash.slice(8) : '';
+    return entries[key] ? key : '';
+  }
+  // Phones land on the row, so the role's title is on screen and entries with no text have a target.
+  function reveal(key) {
+    var x = entries[key], row = rows[key] || rows[x.parent];
+    var target = phone.matches && !state.all && row ? $('.ct-hit', row) : x.el;
+    target.scrollIntoView({ block: 'start', behavior: 'instant' });
+  }
+  window.addEventListener('hashchange', function (e) {
+    var key = hashKey();
+    if (key) {
+      pick(key, false);
+      requestAnimationFrame(function () { reveal(key); });
+    } else if (!location.hash && /#career-/.test(e.oldURL)) {
+      // Back to the plain address: back to today.
+      set({ t: today, open: roleAt(today).key }, 'step', { glide: true });
+    }
+  });
+
+  // Start up. A build can be months old, so everything that depends on today is reset here.
+  root.style.setProperty('--total', today);
+  range.max = today;
+  range.hidden = false;
+  $('[data-ct-years]').textContent = Math.floor((today + 1) / 12);
+  $$('[data-ct-since]').forEach(function (el) { el.textContent = dur(today - +el.dataset.ctSince + 1); });
+  var ticks = $$('.ct-year:not(.is-first)');
+  for (var ty = +ticks[ticks.length - 1].textContent + 5; ty <= d.getFullYear(); ty += 5) {
+    var tick = document.createElement('span');
+    tick.className = 'ct-year' + (ty % 10 === 0 ? ' is-decade' : '');
+    tick.style.setProperty('--m', (ty - 1987) * 12 - 8);
+    tick.textContent = ty;
+    $('.ct-scale').appendChild(tick);
+  }
+  state.open = roleAt(today).key;
+  root.classList.add('is-live');
+  syncLayout();
+  var startKey = hashKey();
+  if (startKey) {
+    pick(startKey, false);
+    requestAnimationFrame(function () { reveal(startKey); });
+    // The browser scrolls to the address's target as the page loads, and images shift the layout.
+    window.addEventListener('load', function () { if (hashKey() === startKey) reveal(startKey); }, { once: true });
+  } else {
+    set({ t: today, open: state.open }, 'init');
+  }
+})();
+</script>
+```
