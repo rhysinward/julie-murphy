@@ -38,7 +38,9 @@ Head of Trade Relations & Partnerships, EMEA, All Nippon Airways (ANA), London
 :::
 
 ::: {.hero-figure}
-{{< include _routes.qmd >}}
+```{=html}
+<img class="hero-portrait" src="assets/img/julie-murphy.jpg" alt="Julie Murphy" width="480" height="480">
+```
 :::
 ::::
 

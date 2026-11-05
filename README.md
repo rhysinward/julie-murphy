@@ -14,7 +14,6 @@ Professional website built with [Quarto](https://quarto.org), published with Git
 | Headline, introduction, profile, quote, impact, contact, short bio | `index.qmd` |
 | Career timeline and Board and industry leadership | `career.yml` (instructions at the top of the file) |
 | Speaking and press | `news.yml`. `lead: true` shows an item before "Show more" |
-| The network graphic beside the portrait | `_routes.qmd` |
 | Colours and fonts | `assets/theme.scss`, the `:root` block |
 | Navigation and footer | `_quarto.yml` |
 | Search engine details (job title, links) | `assets/person.html` |
