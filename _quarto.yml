@@ -17,12 +17,12 @@ website:
   search: false
   navbar:
     right:
+      - text: Impact
+        href: index.qmd#impact
       - text: Career
         href: index.qmd#career
       - text: Profile
         href: index.qmd#what-i-do
-      - text: Impact
-        href: index.qmd#impact
       - text: Industry roles
         href: index.qmd#roles
       - text: Speaking

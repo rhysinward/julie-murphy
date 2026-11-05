@@ -42,6 +42,20 @@ Head of Trade Relations & Partnerships, EMEA, All Nippon Airways (ANA), London
 :::
 ::::
 
+:::: {#impact .block}
+::: {.section-head}
+## Selected commercial impact {#impact-title}
+:::
+
+::: {.impact}
+- **ANA's first pan-European trade relations function.** Helped shape the function, bringing together partnership activity that had previously been managed country by country.
+- **ANA's first multinational TMC agreement.** Led the agreement, working across markets and with colleagues in Japan to agree a common approach with a major customer.
+- **The 2019 ABTA Convention in Tokyo.** Championed the bid, with ANA as a host partner, welcoming more than 400 travel industry delegates and raising ANA's profile in the UK travel trade.
+- **A sales partnership for Ireland.** Pushed for a general sales agent partnership, helping grow a previously underserved market.
+- **New fares for partners.** Developed ITX fare opportunities for UK business travel and luxury leisure partners, opening up a significant new revenue stream and strengthening agency relationships.
+:::
+::::
+
 :::: {#career}
 ::: {#career-list}
 :::
@@ -81,20 +95,6 @@ An elected board director and alliance chair, contributing to the direction of t
 
 :::: {.quote-band}
 > I work at the point where numbers meet nuance, where data informs action, and where partnerships aren't just transactional, they're built to last.
-::::
-
-:::: {#impact .block}
-::: {.section-head}
-## Selected commercial impact {#impact-title}
-:::
-
-::: {.impact}
-- **ANA's first pan-European trade relations function.** Helped shape the function, bringing together partnership activity that had previously been managed country by country.
-- **ANA's first multinational TMC agreement.** Led the agreement, working across markets and with colleagues in Japan to agree a common approach with a major customer.
-- **The 2019 ABTA Convention in Tokyo.** Championed the bid, with ANA as a host partner, welcoming more than 400 travel industry delegates and raising ANA's profile in the UK travel trade.
-- **A sales partnership for Ireland.** Pushed for a general sales agent partnership, helping grow a previously underserved market.
-- **New fares for partners.** Developed ITX fare opportunities for UK business travel and luxury leisure partners, opening up a significant new revenue stream and strengthening agency relationships.
-:::
 ::::
 
 :::: {#roles .block}
