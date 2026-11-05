@@ -70,7 +70,7 @@ const years = Math.floor((total + 1) / 12);
 <ol class="ct-trunk" role="list" aria-label="Airline roles">
 <% for (const r of airline) { const ms = moments.filter(m => m.parent === r.key && m.label); %>
   <li class="ct-role<%= r._early ? ' is-early' : '' %><%= r._now ? ' is-current' : '' %><%= r._lead ? ' is-lead' : '' %><%= ms.length ? ' has-moments' : '' %>" style="--s:<%= r._s %>;--e:<%= r._e === null ? 'var(--total)' : r._e %>" data-ct-row="<%= r.key %>">
-    <a class="ct-hit" href="#career-<%= r.key %>" data-ct-pick="<%= r.key %>" aria-label="<%= esc(r.title) %>, <%= esc(r.employer) %><%= r.place ? ', ' + esc(r.place) : '' %>, <%= long(r.start) %> to <%= r._now ? 'today' : long(r.end) %><% if (!r._now) { %>, <%= dur(r._n) %><% } %>">
+    <a class="ct-hit" href="#career-<%= r.key %>" data-ct-pick="<%= r.key %>" aria-label="<%= esc(r.title) %>, <%= esc(r.employer) %><%= r.place ? ', ' + esc(r.place) : '' %>, <%= range(r) %><% if (!r._now) { %>, <%= dur(r._n) %><% } %>">
       <span class="ct-fill"></span>
       <% if (r._lead) { %>
       <span class="ct-lbl">
@@ -94,7 +94,7 @@ const years = Math.floor((total + 1) / 12);
     </a>
     <% if (ms.length) { %><div class="ct-moments">
       <% ms.forEach((m, n) => { const ym = hasMonth(m.start); const ms0 = ym ? idx(m.start) : idx(m.start + "-01"); const nx = ms[n + 1]; const mn = nx ? (hasMonth(nx.start) ? idx(nx.start) : idx(nx.start + "-01")) : null; %>
-      <a class="ct-moment<%= ym ? '' : ' is-year' %>" href="#career-<%= m.key %>" data-ct-pick="<%= m.key %>" style="--ms:<%= ms0 %><%= mn === null ? '' : ';--room:' + (mn - ms0 - 1) %>" aria-label="<%= esc(m.label) %>: <%= esc(m.title) %>, <%= long(m.start) %>"><span class="ct-mark"></span><span class="ct-moment-lbl"><%= esc(m.label) %><span class="ct-moment-date">, <%= short(m.start) %></span></span></a>
+      <a class="ct-moment<%= ym ? '' : ' is-year' %>" href="#career-<%= m.key %>" data-ct-pick="<%= m.key %>" style="--ms:<%= ms0 %><%= mn === null ? '' : ';--room:' + (mn - ms0 - 1) %>" aria-label="<%= esc(m.label) %>, <%= short(m.start) %>: <%= esc(m.title) %>"><span class="ct-mark"></span><span class="ct-moment-lbl"><%= esc(m.label) %><span class="ct-moment-date">, <%= short(m.start) %></span></span></a>
       <% }); %>
     </div><% } %>
     <span class="ct-seg" aria-hidden="true"></span>
@@ -108,7 +108,7 @@ const years = Math.floor((total + 1) / 12);
   <ul class="ct-rails" role="list" aria-labelledby="ct-rails-title">
   <% for (const r of industry) { const s = idx(r.start), open = r.end === "unknown", now = r.end === "present"; %>
     <li class="ct-row<%= r.strong ? ' is-strong' : '' %><%= open ? ' is-open' : '' %><%= !open && !now ? ' is-ended' : '' %>" style="--s:<%= s %>;--e:<%= now || open ? 'var(--total)' : idx(r.end) + 1 %>" data-ct-row="<%= r.key %>">
-      <a class="ct-hit" href="#career-<%= r.key %>" data-ct-pick="<%= r.key %>" aria-label="<%= esc(r.rail) %>, <%= open ? 'from ' + long(r.start) + ', since left, end date not listed' : now ? 'since ' + long(r.start) : long(r.start) + ' to ' + long(r.end) %>">
+      <a class="ct-hit" href="#career-<%= r.key %>" data-ct-pick="<%= r.key %>" aria-label="<%= esc(r.rail) %>, <%= railDates(r) %>">
         <span class="ct-lbl"><%= esc(r.rail) %>, <%= railDates(r) %></span>
         <span class="ct-track"><span class="ct-bar"></span></span>
       </a>

@@ -9,6 +9,20 @@
     history.replaceState(history.state, '', location.pathname.replace(/index\.html$/, '') + location.search + location.hash);
   }
 
+  // Quarto leaves the phone menu open after a tap, covering the section just opened. Once it has
+  // closed the page has moved up, so go to the section again.
+  document.querySelectorAll('.navbar-nav .nav-link').forEach(function (a) {
+    a.addEventListener('click', function () {
+      var menu = document.querySelector('.navbar-collapse.show');
+      if (!menu || !window.bootstrap) return;
+      menu.addEventListener('hidden.bs.collapse', function () {
+        var target = a.hash && document.querySelector(a.hash);
+        if (target) target.scrollIntoView();
+      }, { once: true });
+      window.bootstrap.Collapse.getOrCreateInstance(menu).hide();
+    });
+  });
+
   var root = document.querySelector('.ct');
   if (!root) return;
 
@@ -19,6 +33,8 @@
   var today = (d.getFullYear() - 1987) * 12 + d.getMonth() + 1 - 9;
   var phone = window.matchMedia('(max-width: 767.98px)');
   var calm = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var printMq = window.matchMedia('print');
+  var printing = false;
   var $ = function (s, el) { return (el || root).querySelector(s); };
   var $$ = function (s, el) { return Array.prototype.slice.call((el || root).querySelectorAll(s)); };
 
@@ -195,7 +211,7 @@
 
   // Phones open an entry in place, under its own row. The entry node moves. It is never copied.
   function place() {
-    var inPlace = phone.matches && !state.all;
+    var inPlace = phone.matches && !state.all && !printing && !printMq.matches;
     list.forEach(function (x) {
       var want = homes[x.key];
       if (inPlace && state.open === x.key) {
@@ -210,7 +226,13 @@
     });
     $$('[data-ct-entry]').forEach(function (el) {
       if (inPlace && el.dataset.ctEntry === state.open) el.classList.add('is-shown');
+      el.style.scrollMarginTop = '';
     });
+    // The browser scrolls to the address's target by itself as a page loads. Have that land on the
+    // row's title too, as reveal() does, rather than on the text below it.
+    var open = inPlace && state.open && entries[state.open];
+    var host = open && (rows[open.key] || rows[open.parent]);
+    if (host) open.el.style.scrollMarginTop = open.el.getBoundingClientRect().top - $('.ct-hit', host).getBoundingClientRect().top + 'px';
   }
 
   // Hold a row still while things above it open or close.
@@ -271,8 +293,14 @@
   }
 
   // Once someone moves the date themselves, a deep link in the address bar is out of date.
+  var cleared = false;
   function clearHash() {
-    if (location.hash.indexOf('#career-') === 0) history.replaceState(history.state, '', location.pathname + location.search);
+    if (location.hash.indexOf('#career-') !== 0) return;
+    history.replaceState(history.state, '', location.pathname + location.search);
+    cleared = true;
+  }
+  function backToToday() {
+    set({ t: today, open: roleAt(today).key }, 'step', { glide: true });
   }
   function moveTo(v) {
     v = Math.max(0, Math.min(today, v));
@@ -299,10 +327,12 @@
     clearHash();
     set({ t: +range.value, open: state.open }, 'slider');
   });
-  var changeTimer;
+  var changeTimer, changePending = false;
   range.addEventListener('change', function () {
     clearTimeout(changeTimer);
+    changePending = true;
     changeTimer = setTimeout(function () {
+      changePending = false;
       if (!phone.matches || state.pick) return;   // a pick keeps its own entry open
       state.open = roleAt(state.t).key;
       render('slider');
@@ -317,24 +347,43 @@
   // A finger landing on the ruler may only be scrolling the page, and the browser may already
   // have moved the slider. If the browser takes the touch for a scroll, put the date back.
   var touch = null;
+  function thumbPx() {
+    return parseFloat(getComputedStyle(root).getPropertyValue('--thumb')) * parseFloat(getComputedStyle(document.documentElement).fontSize);
+  }
+  function undoTouch(was) {
+    clearTimeout(changeTimer);
+    changePending = false;
+    if (was.hash && location.hash !== was.hash) history.replaceState(history.state, '', location.pathname + location.search + was.hash);
+    cleared = was.cleared;
+    set(was.before, 'slider');
+  }
   range.addEventListener('pointerdown', function (e) {
     if (e.pointerType !== 'touch') { touch = null; return; }
-    touch = { x: e.clientX, y: e.clientY, before: { t: state.t, yearOnly: state.yearOnly, pick: state.pick, open: state.open } };
+    if (touch) return;   // a second finger is not a new gesture
+    touch = {
+      id: e.pointerId, x: e.clientX, y: e.clientY, hash: location.hash, cleared: cleared,
+      before: { t: state.t, yearOnly: state.yearOnly, pick: state.pick, open: changePending && !state.pick ? roleAt(state.t).key : state.open }
+    };
   });
-  range.addEventListener('pointercancel', function () {
-    if (!touch) return;
-    clearTimeout(changeTimer);
-    set(touch.before, 'slider');
+  range.addEventListener('pointercancel', function (e) {
+    if (!touch || e.pointerId !== touch.id) return;
+    undoTouch(touch);
     touch = null;
   });
   range.addEventListener('pointerup', function (e) {
-    if (!touch) return;
-    var moved = Math.abs(e.clientX - touch.x) + Math.abs(e.clientY - touch.y);
+    if (!touch || e.pointerId !== touch.id) return;
+    var was = touch;
     touch = null;
+    var moved = Math.abs(e.clientX - was.x) + Math.abs(e.clientY - was.y);
+    var r = range.getBoundingClientRect(), thumb = thumbPx();
+    var thumbAt = r.left + thumb / 2 + was.before.t / today * (r.width - thumb);
+    if (Math.abs(was.x - thumbAt) <= thumb / 2) {
+      // It began on the thumb, and Chrome starts a drag after about 15 px. Anything less is not a move.
+      if (moved < 16) undoTouch(was);
+      return;
+    }
     if (moved > 10) return;
     // iOS Safari does not move a range when its track is tapped.
-    var r = range.getBoundingClientRect();
-    var thumb = parseFloat(getComputedStyle(range).getPropertyValue('--thumb-px')) || 24;
     moveTo(Math.round((e.clientX - r.left - thumb / 2) / (r.width - thumb) * today));
   });
   (phone.addEventListener ? phone.addEventListener.bind(phone, 'change') : phone.addListener.bind(phone))(syncLayout);
@@ -351,14 +400,23 @@
   }
   window.addEventListener('hashchange', function (e) {
     var key = hashKey();
+    if (location.hash) cleared = false;
     if (key) {
       pick(key, false);
       requestAnimationFrame(function () { reveal(key); });
     } else if (!location.hash && /#career-/.test(e.oldURL)) {
-      // Back to the plain address: back to today.
-      set({ t: today, open: roleAt(today).key }, 'step', { glide: true });
+      backToToday();   // back to the plain address
     }
   });
+  // Moving the date turns a deep link's entry into a plain address, so going Back from it fires no
+  // hash change. A reload of that address shows today, so going Back should too.
+  window.addEventListener('popstate', function () {
+    if (cleared && !location.hash) { cleared = false; backToToday(); }
+  });
+  // A printed page shows every entry in its list, and page margins can trip the phone layout.
+  window.addEventListener('beforeprint', function () { printing = true; place(); });
+  window.addEventListener('afterprint', function () { printing = false; place(); });
+  (printMq.addEventListener ? printMq.addEventListener.bind(printMq, 'change') : printMq.addListener.bind(printMq))(place);
 
   // Start up. A build can be months old, so everything that depends on today is reset here.
   root.style.setProperty('--total', today);
